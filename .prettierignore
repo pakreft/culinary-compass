@@ -1,0 +1,5 @@
+# Ignore everything
+/*
+
+# Except src and all it's subdirectories
+!/src
