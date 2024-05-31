@@ -1,12 +1,12 @@
 import { registerRootComponent } from 'expo';
 import { NavigationContainer } from '@react-navigation/native';
 
-import TabBar from './navigation/TabBar/TabBar';
+import BottomTabBarNavigator from './navigation/BottomTabBarNavigator';
 
 export default function App() {
   return (
     <NavigationContainer>
-      <TabBar />
+      <BottomTabBarNavigator />
     </NavigationContainer>
   );
 }

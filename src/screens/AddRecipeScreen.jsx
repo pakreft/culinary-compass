@@ -1,21 +1,11 @@
-// src/screens/AddRecipeScreen.jsx
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-const AddRecipeScreen = () => {
+export default function AddRecipeScreen() {
   return (
-    <View style={styles.container}>
-      <Text>Add Recipe Screen</Text>
+    <View>
+      <Text>AddRecipeScreen</Text>
     </View>
   );
-};
+}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
-
-export default AddRecipeScreen;
+const styles = StyleSheet.create({});

@@ -1,8 +1,14 @@
 export const routes = {
-  search: 'Search',
-  favorites: 'Favorites',
-  planned: 'Planned',
-  plannedMain: 'PlannedMain', // Hinzugefügt
-  shoppingList: 'ShoppingList',
-  addRecipe: 'AddRecipe',
+  // Main Screens
+  searchStack: 'SearchStack',
+  searchScreen: 'SearchScreen',
+  favoritesStack: 'FavoritesStack',
+  favoritesScreen: 'FavoritesScreen',
+  plannedStack: 'PlanendStack',
+  plannedScreen: 'PlannedScreen',
+  shoppingListStack: 'ShoppingListStack',
+  shoppingListScreen: 'ShoppingListScreen',
+
+  // Other Screens
+  addRecipeScreen: 'AddRecipeScreen',
 };

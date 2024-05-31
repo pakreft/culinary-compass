@@ -8,6 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { routes } from '../../constants/routes';
 
 const days = [
   {
@@ -69,7 +70,7 @@ const PlannedScreen = ({ navigation }) => {
       </ScrollView>
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => navigation.navigate('AddRecipe')}
+        onPress={() => navigation.navigate(routes.addRecipeScreen)}
       >
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
