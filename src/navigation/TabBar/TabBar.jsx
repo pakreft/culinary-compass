@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack'; // Hinzugefügt
 
 import { styles } from './styles';
 import { routes } from '../../constants/routes';
@@ -6,8 +7,27 @@ import SearchScreen from '../../screens/SearchScreen';
 import FavoritesScreen from '../../screens/FavoritesScreen';
 import PlannedScreen from '../../screens/PlannedScreen';
 import ShoppingListScreen from '../../screens/ShoppingListScreen';
+import AddRecipeScreen from '../../screens/AddRecipeScreen'; // Import AddRecipeScreen
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator(); // Hinzugefügt
+
+function PlannedStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name={routes.plannedMain}
+        component={PlannedScreen}
+        options={options.planned}
+      />
+      <Stack.Screen
+        name={routes.addRecipe}
+        component={AddRecipeScreen}
+        options={options.addRecipe}
+      />
+    </Stack.Navigator>
+  );
+}
 
 export default function TabBar() {
   return (
@@ -28,7 +48,7 @@ export default function TabBar() {
       />
       <Tab.Screen
         name={routes.planned}
-        component={PlannedScreen}
+        component={PlannedStack}
         options={options.planned}
       />
       <Tab.Screen
@@ -43,12 +63,7 @@ export default function TabBar() {
 const options = {
   default: {
     headerStyle: styles.header,
-    //headerTitleStyle:
-    //tabBarLabelStyle:
-    //tabBarIcon:
-    //tabBarIconStyle:
     tabBarActiveTintColor: 'red',
-    //tabBarInactiveTintColor: 'blue',
     tabBarStyle: styles.tabBar,
   },
   search: {
@@ -66,5 +81,8 @@ const options = {
   shoppingList: {
     headerTitle: 'Shopping List',
     tabBarLabel: 'Shopping List',
+  },
+  addRecipe: {
+    headerTitle: 'Add Recipe',
   },
 };
