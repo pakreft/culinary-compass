@@ -4,7 +4,7 @@ export const routes = {
   searchScreen: 'SearchScreen',
   favoritesStack: 'FavoritesStack',
   favoritesScreen: 'FavoritesScreen',
-  plannedStack: 'PlanendStack',
+  plannedStack: 'PlannedStack',
   plannedScreen: 'PlannedScreen',
   shoppingListStack: 'ShoppingListStack',
   shoppingListScreen: 'ShoppingListScreen',
