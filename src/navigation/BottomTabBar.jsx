@@ -1,10 +1,10 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { routes } from '../constants/routes';
-import SearchScreenStack from './stack/SearchScreenStack';
-import FavoritesScreenStack from './stack/FavoritesScreenStack';
-import PlannedScreenStack from './stack/PlannedScreenStack';
-import ShoppingListScreenStack from './stack/ShoppingListScreenStack';
+import SearchScreenStack from './SearchScreenStack';
+import FavoritesScreenStack from './FavoritesScreenStack';
+import PlannedScreenStack from './PlannedScreenStack';
+import ShoppingListScreenStack from './ShoppingListScreenStack';
 
 const Tab = createBottomTabNavigator();
 

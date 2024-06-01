@@ -1,7 +1,4 @@
 export const stackScreenOptions = {
-  cardStyle: {
-    backgroundColor: 'darkgrey',
-  },
   headerStyle: {
     backgroundColor: 'lightgrey',
   },

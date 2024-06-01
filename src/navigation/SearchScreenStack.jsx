@@ -1,8 +1,8 @@
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { routes } from '../../constants/routes';
+import { routes } from '../constants/routes';
 import { stackScreenOptions } from './stackScreenOptions';
-import SearchScreen from '../../screens/main/SearchScreen';
+import SearchScreen from '../screens/main/SearchScreen';
 
 const Stack = createStackNavigator();
 

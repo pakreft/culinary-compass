@@ -1,8 +1,8 @@
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { routes } from '../../constants/routes';
+import { routes } from '../constants/routes';
 import { stackScreenOptions } from './stackScreenOptions';
-import ShoppingListScreen from '../../screens/main/ShoppingListScreen';
+import ShoppingListScreen from '../screens/main/ShoppingListScreen';
 
 const Stack = createStackNavigator();
 
