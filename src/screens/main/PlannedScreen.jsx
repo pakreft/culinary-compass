@@ -78,7 +78,7 @@ const PlannedScreen = ({ navigation }) => {
       {/* See Details Screen - temporary for testing */}
       <TouchableOpacity
         style={[styles.addButton, {right:100}]}
-        onPress={() => navigation.navigate(routes.addRecipeScreen)}
+        onPress={() => navigation.navigate(routes.detailsRecipeScreen)}
       >
         <Ionicons name="alert-circle" size={60} color="purple" />
       </TouchableOpacity>

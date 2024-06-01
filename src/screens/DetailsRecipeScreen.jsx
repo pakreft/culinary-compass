@@ -1,12 +1,21 @@
 import { StyleSheet, Text, View, Modal } from 'react-native';
 
 
-export default function AddRecipeScreen() {
+export default function DetailsRecipeScreen() {
   return (
-    <View>
-      <Text>AddRecipeScreen</Text>
-    </View>
+    
+    //<Modal
+    //onRequestClose={navigation.goBack()}
+    //animationType="slide">
+        <View>
+            <Text>Details Recipe</Text>
+        </View>
+    //</Modal>
+    
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+
+
+});
