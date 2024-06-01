@@ -1,47 +1,56 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { routes } from '../constants/routes';
-import SearchScreenStackNavigator from './SearchScreenStackNavigator';
-import FavoritesScreenStackNavigator from './FavoritesScreenStackNavigator';
-import PlannedScreenStackNavigator from './PlannedScreenStackNavigator';
-import ShoppingListScreenStackNavigator from './ShoppingListScreenStackNavigator';
+import SearchScreenStack from './stack/SearchScreenStack';
+import FavoritesScreenStack from './stack/FavoritesScreenStack';
+import PlannedScreenStack from './stack/PlannedScreenStack';
+import ShoppingListScreenStack from './stack/ShoppingListScreenStack';
 
 const Tab = createBottomTabNavigator();
 
-export default function BottomTabBarNavigator() {
+export default function BottomTabBar() {
   return (
     <Tab.Navigator
       initialRouteName={routes.searchStack}
+      backBehavior="none"
       screenOptions={{
         headerShown: false,
+        tabBarLabelStyle: {},
+        tabBarStyle: { backgroundColor: 'lightgrey' },
+        tabBarActiveTintColor: 'purple',
+        tabBarInactiveTintColor: 'darkgrey',
       }}
     >
       <Tab.Screen
         name={routes.searchStack}
-        component={SearchScreenStackNavigator}
+        component={SearchScreenStack}
         options={{
           tabBarLabel: 'Search',
+          //tabBarIcon:
         }}
       />
       <Tab.Screen
         name={routes.favoritesStack}
-        component={FavoritesScreenStackNavigator}
+        component={FavoritesScreenStack}
         options={{
           tabBarLabel: 'Favorites',
+          //tabBarIcon:
         }}
       />
       <Tab.Screen
         name={routes.plannedStack}
-        component={PlannedScreenStackNavigator}
+        component={PlannedScreenStack}
         options={{
           tabBarLabel: 'Planned',
+          //tabBarIcon:
         }}
       />
       <Tab.Screen
         name={routes.shoppingListStack}
-        component={ShoppingListScreenStackNavigator}
+        component={ShoppingListScreenStack}
         options={{
           tabBarLabel: 'Shopping List',
+          //tabBarIcon:
         }}
       />
     </Tab.Navigator>
