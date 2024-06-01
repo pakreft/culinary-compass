@@ -72,8 +72,17 @@ const PlannedScreen = ({ navigation }) => {
         style={styles.addButton}
         onPress={() => navigation.navigate(routes.addRecipeScreen)}
       >
-        <Ionicons name="add" size={24} color="white" />
+        <Ionicons name="add-circle" size={60} color="purple" />
       </TouchableOpacity>
+
+      {/* See Details Screen - temporary for testing */}
+      <TouchableOpacity
+        style={[styles.addButton, {right:100}]}
+        onPress={() => navigation.navigate(routes.addRecipeScreen)}
+      >
+        <Ionicons name="alert-circle" size={60} color="purple" />
+      </TouchableOpacity>
+
     </View>
   );
 };
@@ -135,9 +144,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: 'purple',
+    //backgroundColor: 'purple',
     padding: 15,
-    borderRadius: 30,
+    //borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
   },
