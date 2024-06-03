@@ -11,5 +11,4 @@ export const routes = {
 
   // Other Screens
   addRecipeScreen: 'AddRecipeScreen',
-  detailsRecipeScreen: 'DetailsRecipeScreen',
 };

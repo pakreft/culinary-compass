@@ -19,7 +19,7 @@ import {
   endOfWeek,
 } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { routes } from '../../constants/routes';
+import SwipeModal from '../../components/SwipeModal';
 
 // Dummy function to simulate fetching recipes for a date
 const getRecipesForDate = (date) => {
@@ -32,6 +32,9 @@ const getRecipesForDate = (date) => {
 };
 
 const PlannedScreen = ({ navigation }) => {
+ 
+  const [modalVisible, setModalVisible] = useState(false);// Details Modal
+
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [recipes, setRecipes] = useState({});
@@ -99,14 +102,18 @@ const PlannedScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <SwipeModal //Details Modal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      />
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <Text style={styles.headerText}>Planned Recipes</Text>
-          <TouchableOpacity
-            style={styles.alertButton}
-            onPress={() => navigation.navigate(routes.detailsRecipeScreen)}
+          <TouchableOpacity 
+            style={styles.alertButton} // Details Modal
+            onPress={() => setModalVisible(true)}
           >
-            <Ionicons name="alert-circle" size={30} color="purple" />
+            <Ionicons name="alert-circle" size={40} color="purple" />
           </TouchableOpacity>
         </View>
         <View style={styles.weekNavigation}>
