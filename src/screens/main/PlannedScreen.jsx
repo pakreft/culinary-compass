@@ -1,4 +1,3 @@
-// src/screens/PlannedScreen.jsx
 import React, { useState } from 'react';
 import {
   View,
@@ -6,50 +5,122 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  Modal,
+  TextInput,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Calendar } from 'react-native-calendars';
+import {
+  format,
+  startOfWeek,
+  addDays,
+  addWeeks,
+  getISOWeek,
+  endOfWeek,
+} from 'date-fns';
+import { de } from 'date-fns/locale';
 import { routes } from '../../constants/routes';
 
-const days = [
-  {
-    date: 'Montag - 21.06.',
-    recipes: ['Süßkartoffelpommes mit Sourcreme'],
-  },
-  {
-    date: 'Donnerstag - 24.06.',
-    recipes: [
-      'Süßkartoffeln mit blaalal dwadada',
-      'Süßkartoffeln mit blaalal dwadada',
-    ],
-  },
-  // Add more days as needed
-];
+// Dummy function to simulate fetching recipes for a date
+const getRecipesForDate = (date) => {
+  const recipesData = {
+    '2024-06-21': ['Süßkartoffelpommes mit Sourcreme'],
+    '2024-06-24': ['Nudelauflauf', 'Salat'],
+    // Add more dates and recipes as needed
+  };
+  return recipesData[date] || [];
+};
 
 const PlannedScreen = ({ navigation }) => {
-  const [currentWeek, setCurrentWeek] = useState(0);
+  const [calendarVisible, setCalendarVisible] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [recipes, setRecipes] = useState({});
+  const [addRecipeModalVisible, setAddRecipeModalVisible] = useState(false);
+  const [newRecipe, setNewRecipe] = useState('');
+  const [currentDate, setCurrentDate] = useState('');
 
   const handleNextWeek = () => {
-    setCurrentWeek(currentWeek + 1);
+    const newDate = addWeeks(selectedDate, 1);
+    setSelectedDate(newDate);
   };
 
   const handlePrevWeek = () => {
-    setCurrentWeek(currentWeek - 1);
+    const newDate = addWeeks(selectedDate, -1);
+    setSelectedDate(newDate);
+  };
+
+  const handleDateSelect = (date) => {
+    const selected = new Date(date.dateString);
+    setSelectedDate(selected);
+    setCalendarVisible(false);
+  };
+
+  const getWeekNumber = (date) => {
+    return getISOWeek(date);
+  };
+
+  const currentWeek = getWeekNumber(selectedDate);
+
+  const startDate = startOfWeek(selectedDate, { locale: de });
+  const endDate = endOfWeek(selectedDate, { locale: de });
+  const dateRange = `${format(startDate, 'dd.MM.', { locale: de })} - ${format(endDate, 'dd.MM.', { locale: de })}`;
+
+  // Generate the days for the current week
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const dayDate = addDays(startDate, i);
+    const formattedDate = format(dayDate, 'yyyy-MM-dd');
+    const dayName = format(dayDate, 'EEEE', { locale: de });
+    days.push({
+      date: `${dayName} - ${format(dayDate, 'dd.MM.')}`,
+      formattedDate,
+      recipes: recipes[formattedDate] || getRecipesForDate(formattedDate),
+    });
+  }
+
+  const addRecipe = (date, newRecipe) => {
+    setRecipes((prevRecipes) => {
+      const updatedRecipes = { ...prevRecipes };
+      if (!updatedRecipes[date]) {
+        updatedRecipes[date] = [];
+      }
+      updatedRecipes[date].push(newRecipe);
+      return updatedRecipes;
+    });
+  };
+
+  const removeRecipe = (date, index) => {
+    setRecipes((prevRecipes) => {
+      const updatedRecipes = { ...prevRecipes };
+      updatedRecipes[date].splice(index, 1);
+      return updatedRecipes;
+    });
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Planned Recipes</Text>
+        <View style={styles.headerTop}>
+          <Text style={styles.headerText}>Planned Recipes</Text>
+          <TouchableOpacity
+            style={styles.alertButton}
+            onPress={() => navigation.navigate(routes.detailsRecipeScreen)}
+          >
+            <Ionicons name="alert-circle" size={30} color="purple" />
+          </TouchableOpacity>
+        </View>
         <View style={styles.weekNavigation}>
           <TouchableOpacity onPress={handlePrevWeek}>
             <Ionicons name="chevron-back" size={24} color="purple" />
           </TouchableOpacity>
-          <Text style={styles.weekText}>{`Woche ${currentWeek + 1}`}</Text>
+          <TouchableOpacity onPress={() => setCalendarVisible(true)}>
+            <Text style={styles.weekText}>{`Woche ${currentWeek}`}</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleNextWeek}>
             <Ionicons name="chevron-forward" size={24} color="purple" />
           </TouchableOpacity>
         </View>
-        <Text style={styles.dateRange}>31.04. - 06.05.</Text>
+        <Text style={styles.dateRange}>{dateRange}</Text>
       </View>
       <ScrollView>
         {days.map((day, index) => (
@@ -60,29 +131,82 @@ const PlannedScreen = ({ navigation }) => {
                 <View style={styles.recipeTextContainer}>
                   <Text style={styles.recipeText}>{recipe}</Text>
                 </View>
-                <TouchableOpacity style={styles.deleteButton}>
+                <TouchableOpacity
+                  style={styles.deleteButton}
+                  onPress={() => removeRecipe(day.formattedDate, idx)}
+                >
                   <Ionicons name="close" size={24} color="purple" />
                 </TouchableOpacity>
               </View>
             ))}
+            <TouchableOpacity
+              style={styles.addRecipeButton}
+              onPress={() => {
+                setCurrentDate(day.formattedDate);
+                setAddRecipeModalVisible(true);
+              }}
+            >
+              <Ionicons name="add" size={24} color="purple" />
+              <Text style={styles.addRecipeButtonText}>Add Recipe</Text>
+            </TouchableOpacity>
           </View>
         ))}
       </ScrollView>
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => navigation.navigate(routes.addRecipeScreen)}
+      <Modal visible={calendarVisible} animationType="slide">
+        <Calendar
+          onDayPress={handleDateSelect}
+          markedDates={{
+            [format(selectedDate, 'yyyy-MM-dd')]: {
+              selected: true,
+              selectedColor: 'purple',
+            },
+          }}
+        />
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={() => setCalendarVisible(false)}
+        >
+          <Text style={styles.closeButtonText}>Schließen</Text>
+        </TouchableOpacity>
+      </Modal>
+      <Modal
+        visible={addRecipeModalVisible}
+        animationType="slide"
+        transparent={true}
       >
-        <Ionicons name="add-circle" size={60} color="purple" />
-      </TouchableOpacity>
-
-      {/* See Details Screen - temporary for testing */}
-      <TouchableOpacity
-        style={[styles.addButton, {right:100}]}
-        onPress={() => navigation.navigate(routes.detailsRecipeScreen)}
-      >
-        <Ionicons name="alert-circle" size={60} color="purple" />
-      </TouchableOpacity>
-
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Add Recipe</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Recipe name"
+              value={newRecipe}
+              onChangeText={setNewRecipe}
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={() => {
+                  addRecipe(currentDate, newRecipe);
+                  setNewRecipe('');
+                  setAddRecipeModalVisible(false);
+                }}
+              >
+                <Text style={styles.saveButtonText}>Save</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => {
+                  setNewRecipe('');
+                  setAddRecipeModalVisible(false);
+                }}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -98,9 +222,18 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
   },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
   headerText: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  alertButton: {
+    marginRight: 10,
   },
   weekNavigation: {
     flexDirection: 'row',
@@ -118,6 +251,9 @@ const styles = StyleSheet.create({
   },
   dayContainer: {
     marginVertical: 10,
+    padding: 10,
+    backgroundColor: 'lightgray',
+    borderRadius: 5,
   },
   dayText: {
     fontSize: 16,
@@ -126,7 +262,7 @@ const styles = StyleSheet.create({
   recipeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'lightgray',
+    backgroundColor: 'white',
     padding: 10,
     borderRadius: 5,
     marginVertical: 5,
@@ -140,15 +276,79 @@ const styles = StyleSheet.create({
   deleteButton: {
     marginLeft: 10,
   },
-  addButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    //backgroundColor: 'purple',
-    padding: 15,
-    //borderRadius: 30,
+  addRecipeButton: {
+    flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 5,
+    marginVertical: 5,
+  },
+  addRecipeButtonText: {
+    marginLeft: 5,
+    color: 'purple',
+  },
+  closeButton: {
+    backgroundColor: 'purple',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    margin: 20,
+  },
+  closeButtonText: {
+    color: 'white',
+  },
+  modalContainer: {
+    flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  input: {
+    width: '100%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginVertical: 10,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  saveButton: {
+    backgroundColor: 'purple',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    flex: 1,
+    marginRight: 5,
+  },
+  saveButtonText: {
+    color: 'white',
+  },
+  cancelButton: {
+    backgroundColor: 'gray',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    flex: 1,
+    marginLeft: 5,
+  },
+  cancelButtonText: {
+    color: 'white',
   },
 });
 
