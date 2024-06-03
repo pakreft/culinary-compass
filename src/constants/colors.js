@@ -1,4 +1,4 @@
-// colortheme
+// colortheme , used in components/SwipeModal
 import tinycolor from 'tinycolor2';
 
 const accentColor = 'firebrick'; 
