@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   inputContainer: {
+    borderRadius: 22,
     backgroundColor: 'lightgrey',
   },
   input: {
