@@ -1,3 +1,5 @@
+// TODO: Check, if recipe is favorit?
+// TODO: Add picture
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -156,12 +158,6 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
             <View style={styles.groceryItems}>
               {recipe.ingredientLines.map((item, index) => (
                 <View key={index} style={styles.groceryItem}>
-                  <Icon
-                    color={colors.text}
-                    name="restaurant"
-                    type="material"
-                    size={40}
-                  />
                   <Text style={styles.groceryText}>{item}</Text>
                 </View>
               ))}
@@ -335,6 +331,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   nutrition: {
+    
     padding: 20,
   },
   nutritionTitle: {
@@ -343,6 +340,7 @@ const styles = StyleSheet.create({
   },
   nutritionItems: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
     marginHorizontal: 20,
   },
