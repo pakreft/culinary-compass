@@ -8,6 +8,8 @@ export const routes = {
   plannedScreen: 'PlannedScreen',
   shoppingListStack: 'ShoppingListStack',
   shoppingListScreen: 'ShoppingListScreen',
+  playGroundStack: 'PlayGroundScreenStack',
+  playGroundScreen: 'PlayGroundScreen',
 
   // Other Screens
   addRecipeScreen: 'AddRecipeScreen',

@@ -5,6 +5,8 @@ import SearchScreenStack from './SearchScreenStack';
 import FavoritesScreenStack from './FavoritesScreenStack';
 import PlannedScreenStack from './PlannedScreenStack';
 import ShoppingListScreenStack from './ShoppingListScreenStack';
+import PlayGroundScreen from './PlayGroundScreenStack';
+import PlayGroundScreenStack from './PlayGroundScreenStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -50,6 +52,14 @@ export default function BottomTabBar() {
         component={ShoppingListScreenStack}
         options={{
           tabBarLabel: 'Shopping List',
+          //tabBarIcon:
+        }}
+      />
+      <Tab.Screen
+        name={routes.playGroundStack}
+        component={PlayGroundScreenStack}
+        options={{
+          tabBarLabel: 'PlayGround',
           //tabBarIcon:
         }}
       />
