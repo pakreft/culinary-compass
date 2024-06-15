@@ -24,16 +24,15 @@ import SwipeModal from '../../components/SwipeModal';
 // Dummy function to simulate fetching recipes for a date
 const getRecipesForDate = (date) => {
   const recipesData = {
-    '2024-06-21': ['Süßkartoffelpommes mit Sourcreme'],
-    '2024-06-24': ['Nudelauflauf', 'Salat'],
+    //'2024-06-21': ['Süßkartoffelpommes mit Sourcreme'],
+    //'2024-06-24': ['Nudelauflauf', 'Salat'],
     // Add more dates and recipes as needed
   };
   return recipesData[date] || [];
 };
 
 const PlannedScreen = ({ navigation }) => {
- 
-  const [modalVisible, setModalVisible] = useState(false);// Details Modal
+  const [modalVisible, setModalVisible] = useState(false); // Details Modal
 
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -109,7 +108,7 @@ const PlannedScreen = ({ navigation }) => {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <Text style={styles.headerText}>Planned Recipes</Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.alertButton} // Details Modal
             onPress={() => setModalVisible(true)}
           >
