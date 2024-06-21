@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -20,6 +20,7 @@ import {
 } from 'date-fns';
 import { de } from 'date-fns/locale';
 import SwipeModal from '../../components/SwipeModal';
+import ShoppingListContext from '../../contexts/ShoppingListContext'; // Von Lennard: Handling, dass Items an die Einkaufliste geschickt werden können
 
 // Dummy function to simulate fetching recipes for a date
 const getRecipesForDate = (date) => {
@@ -40,6 +41,15 @@ const PlannedScreen = ({ navigation }) => {
   const [addRecipeModalVisible, setAddRecipeModalVisible] = useState(false);
   const [newRecipe, setNewRecipe] = useState('');
   const [currentDate, setCurrentDate] = useState('');
+
+  // Neuer Code von Lennard für Einkaufsliste --->
+  // handleAddItem aufrufen und Parameter ausfüllen, um Zutaten zur Einkaufsliste hinzuzufügen
+  const { addItem } = useContext(ShoppingListContext);
+  const handleAddItem = (name, category, amount, recipe) => {
+    const newItem = { name: name, category: category, amount: amount, done: false, recipe: recipe };
+    addItem(newItem);
+  };
+  // <--- Bis hierhin
 
   const handleNextWeek = () => {
     const newDate = addWeeks(selectedDate, 1);
@@ -99,6 +109,9 @@ const PlannedScreen = ({ navigation }) => {
     });
   };
 
+
+
+
   return (
     <View style={styles.container}>
       <SwipeModal //Details Modal
@@ -111,6 +124,8 @@ const PlannedScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.alertButton} // Details Modal
             onPress={() => setModalVisible(true)}
+            // Von Lennard: Hier ein Beispiel, wie man Einträge hinzufügen würde.
+            //onPress={() => handleAddItem('Tomato', 'Gemüse', '200g', 'Salad')}    
           >
             <Ionicons name="alert-circle" size={40} color="purple" />
           </TouchableOpacity>

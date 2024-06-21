@@ -1,7 +1,6 @@
 // TODO: Check, if recipe is favorit?
 // TODO: Add picture
-// TODO: 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -15,6 +14,7 @@ import {
 import { Icon } from 'react-native-elements';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../constants/colors';
+import ShoppingListContext from '../contexts/ShoppingListContext'; // Von Lennard: Handling, dass Items an die Einkaufliste geschickt werden können
 
 const { height } = Dimensions.get('window');
 
@@ -34,6 +34,15 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   const decrementPortions = () => setPortions(portions > 1 ? portions - 1 : 1);
   const toggleFavorite = () => setIsFavorite(!isFavorite);
   const favoriteIconName = isFavorite ? 'favorite' : 'favorite-outline';
+
+  // Neuer Code von Lennard für Einkaufsliste --->
+  // handleAddItem aufrufen und Parameter ausfüllen, um Zutaten zur Einkaufsliste hinzuzufügen
+  const { addItem } = useContext(ShoppingListContext);
+  const handleAddItem = (name, category, amount, recipe) => {
+    const newItem = { name: name, category: category, amount: amount, done: false, recipe: recipe };
+    addItem(newItem);
+  };
+  // <--- Bis hierhin
 
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -139,6 +148,8 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
             <View style={styles.groceriesHeader}>
               <Text style={styles.groceriesTitle}>Ingredients</Text>
               <Pressable
+                // Von Lennard: Hier ein Beispiel, wie man Einträge hinzufügen würde.
+                // onPress={() => handleAddItem('Tomato', 'Gemüse', '200g', 'Salad')}
                 style={({ pressed }) => [
                   styles.addToShoppingListBtn,
                   pressed && styles.pressedButton,
