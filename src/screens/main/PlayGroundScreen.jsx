@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
 import axios from 'axios';
-import RecipeCard from '../../components/RecipeCard'; // Importiere die RecipeCard Komponente
+import RecipeCard from '../../components/RecipeCard'; // Import RecipeCard
 
 const APP_ID = '7d001e38';
 const APP_KEY = 'a7155b5bebc73690b4c7c5f596792ebc';
-const PAGE_SIZE = 10; // Anzahl der Rezepte pro Seite
+const PAGE_SIZE = 10; 
 
 const PlayGroundScreen = () => {
   const [query, setQuery] = useState('');
@@ -55,10 +55,10 @@ const PlayGroundScreen = () => {
       {error && <Text style={styles.error}>Error: {error.message}</Text>}
       <FlatList
         data={recipes}
-        keyExtractor={(item, index) => `${item.recipe.uri}-${index}`} // Verwenden Sie den Index als Teil des Schlüssels
-        numColumns={2} // Zwei Spalten für die Anzeige der Karten
+        keyExtractor={(item, index) => `${item.recipe.uri}-${index}`} 
+        numColumns={2} // Two Columns for recipeCard
         renderItem={({ item }) => (
-          <RecipeCard recipe={item.recipe} onPress={handleRecipePress} />
+          <RecipeCard recipe={item.recipe} onPress={handleRecipePress} /> //Add Recipe Card
         )}
         onEndReached={() => {
           if (!loading) {
