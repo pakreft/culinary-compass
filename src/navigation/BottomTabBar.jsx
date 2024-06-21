@@ -48,11 +48,10 @@ export default function BottomTabBar() {
         }}
       />
       <Tab.Screen
-        name={routes.shoppingListStack}
+        name="ShoppingList"
         component={ShoppingListScreenStack}
         options={{
           tabBarLabel: 'Shopping List',
-          //tabBarIcon:
         }}
       />
       <Tab.Screen
