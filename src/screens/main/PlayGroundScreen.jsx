@@ -1,14 +1,7 @@
-
-
-//curl "https://api.edamam.com/search?q=apple%20pie&app_id=7d001e38&app_key=a7155b5bebc73690b4c7c5f596792ebc"
-
-/**
-const APP_ID = '7d001e38';
-const APP_KEY = 'a7155b5bebc73690b4c7c5f596792ebc';
- */
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
 import axios from 'axios';
+import RecipeCard from '../../components/RecipeCard'; // Importiere die RecipeCard Komponente
 
 const APP_ID = '7d001e38';
 const APP_KEY = 'a7155b5bebc73690b4c7c5f596792ebc';
@@ -63,10 +56,9 @@ const PlayGroundScreen = () => {
       <FlatList
         data={recipes}
         keyExtractor={(item, index) => `${item.recipe.uri}-${index}`} // Verwenden Sie den Index als Teil des Schlüssels
+        numColumns={2} // Zwei Spalten für die Anzeige der Karten
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleRecipePress(item.recipe)}>
-            <Text style={styles.recipeName}>{item.recipe.label}</Text>
-          </TouchableOpacity>
+          <RecipeCard recipe={item.recipe} onPress={handleRecipePress} />
         )}
         onEndReached={() => {
           if (!loading) {
@@ -115,12 +107,6 @@ const styles = StyleSheet.create({
     padding: 10,
     marginRight: 10,
     borderRadius: 5,
-  },
-  recipeName: {
-    fontSize: 18,
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
   },
   recipeDetails: {
     marginTop: 20,
