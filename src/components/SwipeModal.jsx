@@ -20,7 +20,7 @@ const { height } = Dimensions.get('window');
 const SwipeModal = ({ visible, onClose, recipe }) => {
   const [pan] = useState(new Animated.ValueXY(0, 0));
   const [portions, setPortions] = useState(1);
-  const { favorites, addFavorite, removeFavorite } = useFavorites();
+  const {favorites, addFavorite, removeFavorite } = useFavorites();
   const [ingredients, setIngredients] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
 
