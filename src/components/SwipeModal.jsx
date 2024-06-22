@@ -34,9 +34,14 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
 
   const updateIngredients = (newPortions) => {
     const updatedIngredients = recipe.ingredients.map((ingredient) => {
-      const updatedQuantity = (ingredient.quantity / recipe.yield) * newPortions;
+      const updatedQuantity =
+        (ingredient.quantity / recipe.yield) * newPortions;
       const updatedWeight = (ingredient.weight / recipe.yield) * newPortions;
-      return { ...ingredient, quantity: updatedQuantity, weight: updatedWeight };
+      return {
+        ...ingredient,
+        quantity: updatedQuantity,
+        weight: updatedWeight,
+      };
     });
     setIngredients(updatedIngredients);
   };
@@ -52,9 +57,12 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   }
 
   // Filtern und nur die gewünschten Nährstoffe anzeigen (Kalorien, Protein, Kohlenhydrate, Fett)
-  const nutritionItems = [{label: 'Calories', total: Math.round(recipe.calories) },...recipe.digest.filter((item) =>
-    ['Protein', 'Carbs', 'Fat'].includes(item.label)
-  )];
+  const nutritionItems = [
+    { label: 'Calories', total: Math.round(recipe.calories) },
+    ...recipe.digest.filter((item) =>
+      ['Protein', 'Carbs', 'Fat'].includes(item.label),
+    ),
+  ];
 
   const decrementPortions = () => {
     const newPortions = portions > 1 ? portions - 1 : 1;
@@ -109,15 +117,14 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
     console.log(category); // Zeigt die foodCategory in der Konsole an
   };
 
-  
   function roundToMaxOneDecimal(number) {
     if (Number.isInteger(number)) {
-        return number;
+      return number;
     } else {
-        let roundedNumber = parseFloat(number.toFixed(1));
-        return roundedNumber;
+      let roundedNumber = parseFloat(number.toFixed(1));
+      return roundedNumber;
     }
-}
+  }
 
   return (
     <Modal
@@ -223,17 +230,27 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
                 <View key={index} style={styles.groceryItem}>
                   <Pressable
                     onPress={() => handlePress(item.foodCategory)}
-                     style={({ pressed }) => [
+                    style={({ pressed }) => [
                       {
-                        backgroundColor: pressed ? '#ddd' : 'black'
+                        backgroundColor: pressed ? '#ddd' : 'black',
                       },
-                      styles.pressable
+                      styles.pressable,
                     ]}
                   >
-                <Text style={styles.buttonText}>{item.quantity === 0 ? 'pinch of' :roundToMaxOneDecimal(item.quantity)+' '}{(item.measure === '<unit>' || item.measure === null) ? '' : item.measure } - {item.food} {Math.round(item.weight) === 0 ? '' :Math.round(item.weight)+' '}g </Text>
-                
-                
-                </Pressable>
+                    <Text style={styles.buttonText}>
+                      {item.quantity === 0
+                        ? 'pinch of'
+                        : roundToMaxOneDecimal(item.quantity) + ' '}
+                      {item.measure === '<unit>' || item.measure === null
+                        ? ''
+                        : item.measure}{' '}
+                      - {item.food}{' '}
+                      {Math.round(item.weight) === 0
+                        ? ''
+                        : Math.round(item.weight) + ' '}
+                      g{' '}
+                    </Text>
+                  </Pressable>
                   {/* <Text style={styles.groceryText}>{item}</Text> */}
                 </View>
               ))}
@@ -246,7 +263,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
               {nutritionItems.map((item, index) => (
                 <View key={index} style={styles.nutritionItem}>
                   <Text style={styles.nutritionValue}>
-                {Math.round(item.total)}
+                    {Math.round(item.total)}
                   </Text>
                   <Text style={styles.nutritionLabel}>{item.label}</Text>
                 </View>
@@ -301,26 +318,23 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
   },
   container: {
-    height: '95%',
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 20,
+    flex: 1,
+    backgroundColor: colors.primary,
   },
   header: {
-    borderBottomWidth: 0.5,
-    borderBottomColor: colors.accent,
-    paddingBottom: 20,
+    padding: 20,
+    marginBottom: 20,
+    backgroundColor: colors.header,
   },
   title: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   recipeTitle: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 15,
   },
