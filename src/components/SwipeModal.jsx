@@ -21,26 +21,48 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   const [pan] = useState(new Animated.ValueXY(0, 0));
   const [portions, setPortions] = useState(1);
   const { favorites, addFavorite, removeFavorite } = useFavorites();
+  const [ingredients, setIngredients] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     if (recipe) {
-      setPortions(1);
+      setPortions(recipe.yield);
       setIsFavorite(favorites.some((fav) => fav.label === recipe.label));
+      setIngredients(recipe.ingredients);
     }
   }, [recipe, favorites]);
 
-  const incrementPortions = () => setPortions(portions + 1);
-  const decrementPortions = () => setPortions(portions > 1 ? portions - 1 : 1);
-  const toggleFavorite = () => {
-    if (isFavorite) {
-      removeFavorite(recipe);
-    } else {
-      addFavorite(recipe);
-    }
-    setIsFavorite(!isFavorite);
+  const updateIngredients = (newPortions) => {
+    const updatedIngredients = recipe.ingredients.map((ingredient) => {
+      const updatedQuantity = (ingredient.quantity / recipe.yield) * newPortions;
+      const updatedWeight = (ingredient.weight / recipe.yield) * newPortions;
+      return { ...ingredient, quantity: updatedQuantity, weight: updatedWeight };
+    });
+    setIngredients(updatedIngredients);
   };
 
+  const incrementPortions = () => {
+    const newPortions = portions + 1;
+    setPortions(newPortions);
+    updateIngredients(newPortions);
+  };
+
+  if (!recipe) {
+    return null; // Wenn recipe null ist, wird die Modalansicht nicht gerendert
+  }
+
+  // Filtern und nur die gewünschten Nährstoffe anzeigen (Kalorien, Protein, Kohlenhydrate, Fett)
+  const nutritionItems = [{label: 'Calories', total: Math.round(recipe.calories) },...recipe.digest.filter((item) =>
+    ['Protein', 'Carbs', 'Fat'].includes(item.label)
+  )];
+
+  const decrementPortions = () => {
+    const newPortions = portions > 1 ? portions - 1 : 1;
+    setPortions(newPortions);
+    updateIngredients(newPortions);
+  };
+
+  const toggleFavorite = () => setIsFavorite(!isFavorite);
   const favoriteIconName = isFavorite ? 'favorite' : 'favorite-outline';
 
   const { addItem } = useContext(ShoppingListContext);
@@ -82,6 +104,20 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   if (!recipe) {
     return null;
   }
+
+  const handlePress = (category) => {
+    console.log(category); // Zeigt die foodCategory in der Konsole an
+  };
+
+  
+  function roundToMaxOneDecimal(number) {
+    if (Number.isInteger(number)) {
+        return number;
+    } else {
+        let roundedNumber = parseFloat(number.toFixed(1));
+        return roundedNumber;
+    }
+}
 
   return (
     <Modal
@@ -177,14 +213,28 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
                   size={25}
                   style={styles.addToShoppingListIcon}
                   color={colors.brightest}
+                  onPress={() => console.log(recipe.ingredients)}
                 />
               </Pressable>
             </View>
 
             <View style={styles.groceryItems}>
-              {recipe.ingredientLines.map((item, index) => (
+              {ingredients.map((item, index) => (
                 <View key={index} style={styles.groceryItem}>
-                  <Text style={styles.groceryText}>{item}</Text>
+                  <Pressable
+                    onPress={() => handlePress(item.foodCategory)}
+                     style={({ pressed }) => [
+                      {
+                        backgroundColor: pressed ? '#ddd' : 'black'
+                      },
+                      styles.pressable
+                    ]}
+                  >
+                <Text style={styles.buttonText}>{item.quantity === 0 ? 'pinch of' :roundToMaxOneDecimal(item.quantity)+' '}{(item.measure === '<unit>' || item.measure === null) ? '' : item.measure } - {item.food} {Math.round(item.weight) === 0 ? '' :Math.round(item.weight)+' '}g </Text>
+                
+                
+                </Pressable>
+                  {/* <Text style={styles.groceryText}>{item}</Text> */}
                 </View>
               ))}
             </View>
@@ -193,10 +243,10 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
           <View style={styles.nutrition}>
             <Text style={styles.nutritionTitle}>Nutrition</Text>
             <View style={styles.nutritionItems}>
-              {recipe.digest.map((item, index) => (
+              {nutritionItems.map((item, index) => (
                 <View key={index} style={styles.nutritionItem}>
                   <Text style={styles.nutritionValue}>
-                    {Math.round(item.total)}
+                {Math.round(item.total)}
                   </Text>
                   <Text style={styles.nutritionLabel}>{item.label}</Text>
                 </View>

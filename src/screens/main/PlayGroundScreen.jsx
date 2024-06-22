@@ -56,7 +56,7 @@ const PlayGroundScreen = () => {
       <FlatList
         data={recipes}
         keyExtractor={(item, index) => `${item.recipe.uri}-${index}`} 
-        numColumns={2} // Two Columns for recipeCard
+        numColumns={2} // Two Columns for RecipeCard
         renderItem={({ item }) => (
           <RecipeCard recipe={item.recipe} onPress={handleRecipePress} /> //Add Recipe Card
         )}
