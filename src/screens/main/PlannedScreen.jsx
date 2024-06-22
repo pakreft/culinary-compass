@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,10 @@ import {
   StyleSheet,
   Modal,
   TextInput,
+  Button,
+  FlatList,
+  Image,
+  Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Calendar } from 'react-native-calendars';
@@ -20,36 +24,45 @@ import {
 } from 'date-fns';
 import { de } from 'date-fns/locale';
 import SwipeModal from '../../components/SwipeModal';
-import ShoppingListContext from '../../contexts/ShoppingListContext'; // Von Lennard: Handling, dass Items an die Einkaufliste geschickt werden können
+import ShoppingListContext from '../../contexts/ShoppingListContext';
+import axios from 'axios';
+import RecipeCard from '../../components/RecipeCard'; // Import RecipeCard
 
-// Dummy function to simulate fetching recipes for a date
-const getRecipesForDate = (date) => {
-  const recipesData = {
-    //'2024-06-21': ['Süßkartoffelpommes mit Sourcreme'],
-    //'2024-06-24': ['Nudelauflauf', 'Salat'],
-    // Add more dates and recipes as needed
-  };
-  return recipesData[date] || [];
-};
+const APP_ID = '7d001e38';
+const APP_KEY = 'a7155b5bebc73690b4c7c5f596792ebc';
+const PAGE_SIZE = 10;
 
 const PlannedScreen = ({ navigation }) => {
-  const [modalVisible, setModalVisible] = useState(false); // Details Modal
-
+  const [modalVisible, setModalVisible] = useState(false);
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [recipes, setRecipes] = useState({});
   const [addRecipeModalVisible, setAddRecipeModalVisible] = useState(false);
-  const [newRecipe, setNewRecipe] = useState('');
   const [currentDate, setCurrentDate] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [from, setFrom] = useState(0);
+  const [favoriteRecipes, setFavoriteRecipes] = useState([]); // State to hold favorite recipes
+  const [selectedRecipe, setSelectedRecipe] = useState(null); // State to hold selected recipe
 
-  // Neuer Code von Lennard für Einkaufsliste --->
-  // handleAddItem aufrufen und Parameter ausfüllen, um Zutaten zur Einkaufsliste hinzuzufügen
   const { addItem } = useContext(ShoppingListContext);
-  const handleAddItem = (name, category, amount, recipe) => {
-    const newItem = { name: name, category: category, amount: amount, done: false, recipe: recipe };
-    addItem(newItem);
-  };
-  // <--- Bis hierhin
+
+  useEffect(() => {
+    // Fetch favorite recipes on component mount
+    const fetchFavoriteRecipes = async () => {
+      try {
+        const response = await axios.get(
+          `https://api.edamam.com/search?q=chicken&app_id=${APP_ID}&app_key=${APP_KEY}&health=alcohol-free`,
+        );
+        setFavoriteRecipes(response.data.hits);
+      } catch (error) {
+        console.error('Error fetching favorite recipes:', error);
+      }
+    };
+
+    fetchFavoriteRecipes();
+  }, []);
 
   const handleNextWeek = () => {
     const newDate = addWeeks(selectedDate, 1);
@@ -75,9 +88,12 @@ const PlannedScreen = ({ navigation }) => {
 
   const startDate = startOfWeek(selectedDate, { locale: de });
   const endDate = endOfWeek(selectedDate, { locale: de });
-  const dateRange = `${format(startDate, 'dd.MM.', { locale: de })} - ${format(endDate, 'dd.MM.', { locale: de })}`;
+  const dateRange = `${format(startDate, 'dd.MM.', { locale: de })} - ${format(
+    endDate,
+    'dd.MM.',
+    { locale: de },
+  )}`;
 
-  // Generate the days for the current week
   const days = [];
   for (let i = 0; i < 7; i++) {
     const dayDate = addDays(startDate, i);
@@ -86,7 +102,7 @@ const PlannedScreen = ({ navigation }) => {
     days.push({
       date: `${dayName} - ${format(dayDate, 'dd.MM.')}`,
       formattedDate,
-      recipes: recipes[formattedDate] || getRecipesForDate(formattedDate),
+      recipes: recipes[formattedDate] || [],
     });
   }
 
@@ -99,6 +115,7 @@ const PlannedScreen = ({ navigation }) => {
       updatedRecipes[date].push(newRecipe);
       return updatedRecipes;
     });
+    setAddRecipeModalVisible(false);
   };
 
   const removeRecipe = (date, index) => {
@@ -109,23 +126,49 @@ const PlannedScreen = ({ navigation }) => {
     });
   };
 
+  const searchRecipes = async (reset = false) => {
+    if (!searchQuery.trim()) {
+      setSearchResults(favoriteRecipes);
+      return;
+    }
+    if (reset) {
+      setFrom(0);
+      setSearchResults([]);
+    }
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `https://api.edamam.com/search?q=${searchQuery}&app_id=${APP_ID}&app_key=${APP_KEY}&from=${reset ? 0 : from}&to=${reset ? PAGE_SIZE : from + PAGE_SIZE}`,
+      );
+      setSearchResults((prevResults) =>
+        reset ? response.data.hits : [...prevResults, ...response.data.hits],
+      );
+      setFrom(reset ? PAGE_SIZE : from + PAGE_SIZE);
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-
+  const openRecipeModal = (recipe) => {
+    setSelectedRecipe(recipe);
+    setModalVisible(true);
+  };
 
   return (
     <View style={styles.container}>
-      <SwipeModal //Details Modal
+      <SwipeModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
+        recipe={selectedRecipe} // Pass the selected recipe to the SwipeModal
       />
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <Text style={styles.headerText}>Planned Recipes</Text>
           <TouchableOpacity
-            style={styles.alertButton} // Details Modal
+            style={styles.alertButton}
             onPress={() => setModalVisible(true)}
-            // Von Lennard: Hier ein Beispiel, wie man Einträge hinzufügen würde.
-            //onPress={() => handleAddItem('Tomato', 'Gemüse', '200g', 'Salad')}    
           >
             <Ionicons name="alert-circle" size={40} color="purple" />
           </TouchableOpacity>
@@ -135,7 +178,7 @@ const PlannedScreen = ({ navigation }) => {
             <Ionicons name="chevron-back" size={24} color="purple" />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setCalendarVisible(true)}>
-            <Text style={styles.weekText}>{`Woche ${currentWeek}`}</Text>
+            <Text style={styles.weekText}>{`Week ${currentWeek}`}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleNextWeek}>
             <Ionicons name="chevron-forward" size={24} color="purple" />
@@ -149,9 +192,15 @@ const PlannedScreen = ({ navigation }) => {
             <Text style={styles.dayText}>{day.date}</Text>
             {day.recipes.map((recipe, idx) => (
               <View key={idx} style={styles.recipeContainer}>
-                <View style={styles.recipeTextContainer}>
-                  <Text style={styles.recipeText}>{recipe}</Text>
-                </View>
+                <TouchableOpacity onPress={() => openRecipeModal(recipe)}>
+                  <View style={styles.recipeCard}>
+                    <Image
+                      source={{ uri: recipe.image }}
+                      style={styles.recipeImage}
+                    />
+                    <Text style={styles.recipeLabel}>{recipe.label}</Text>
+                  </View>
+                </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.deleteButton}
                   onPress={() => removeRecipe(day.formattedDate, idx)}
@@ -165,15 +214,22 @@ const PlannedScreen = ({ navigation }) => {
               onPress={() => {
                 setCurrentDate(day.formattedDate);
                 setAddRecipeModalVisible(true);
+                setSearchQuery('');
+                setSearchResults(favoriteRecipes); // Show favorite recipes initially
               }}
             >
-              <Ionicons name="add" size={24} color="purple" />
+              <Ionicons name="add" size={24} color="#fff" />
               <Text style={styles.addRecipeButtonText}>Add Recipe</Text>
             </TouchableOpacity>
           </View>
         ))}
       </ScrollView>
-      <Modal visible={calendarVisible} animationType="slide">
+
+      <Modal
+        visible={calendarVisible}
+        animationType="slide"
+        onRequestClose={() => setCalendarVisible(false)}
+      >
         <Calendar
           onDayPress={handleDateSelect}
           markedDates={{
@@ -187,44 +243,66 @@ const PlannedScreen = ({ navigation }) => {
           style={styles.closeButton}
           onPress={() => setCalendarVisible(false)}
         >
-          <Text style={styles.closeButtonText}>Schließen</Text>
+          <Text style={styles.closeButtonText}>Close</Text>
         </TouchableOpacity>
       </Modal>
+
       <Modal
         visible={addRecipeModalVisible}
         animationType="slide"
-        transparent={true}
+        onRequestClose={() => setAddRecipeModalVisible(false)}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Add Recipe</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Recipe name"
-              value={newRecipe}
-              onChangeText={setNewRecipe}
-            />
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={styles.saveButton}
+            <View style={styles.searchContainer}>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search for recipes..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+              <Button
+                title="Search"
                 onPress={() => {
-                  addRecipe(currentDate, newRecipe);
-                  setNewRecipe('');
-                  setAddRecipeModalVisible(false);
+                  searchRecipes(true);
+                  Keyboard.dismiss();
                 }}
-              >
-                <Text style={styles.saveButtonText}>Save</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={() => {
-                  setNewRecipe('');
-                  setAddRecipeModalVisible(false);
-                }}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
+              />
             </View>
+            {loading ? (
+              <Text style={styles.loadingText}>Loading...</Text>
+            ) : (
+              <FlatList
+                data={searchResults}
+                keyExtractor={(item) => item.recipe.uri}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.recipeCard}
+                    onPress={() => addRecipe(currentDate, item.recipe)}
+                  >
+                    <Image
+                      source={{ uri: item.recipe.image }}
+                      style={styles.recipeImage}
+                    />
+                    <Text style={styles.recipeLabel}>{item.recipe.label}</Text>
+                  </TouchableOpacity>
+                )}
+                onEndReached={() => searchRecipes()}
+                onEndReachedThreshold={0.5}
+                ListEmptyComponent={
+                  !searchQuery.trim() && favoriteRecipes.length === 0 ? (
+                    <Text>No favorite recipes found.</Text>
+                  ) : null
+                }
+              />
+            )}
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setAddRecipeModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -235,141 +313,139 @@ const PlannedScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
   },
   header: {
-    backgroundColor: 'lightgray',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+    backgroundColor: 'white',
   },
   headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%',
   },
   headerText: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
+    color: 'purple',
   },
   alertButton: {
-    marginRight: 10,
+    padding: 8,
   },
   weekNavigation: {
     flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10,
+    marginTop: 8,
   },
   weekText: {
-    fontSize: 16,
-    marginHorizontal: 10,
+    fontSize: 18,
     color: 'purple',
+    marginHorizontal: 8,
   },
   dateRange: {
-    fontSize: 14,
-    color: 'purple',
+    fontSize: 16,
+    color: 'gray',
+    textAlign: 'center',
+    marginTop: 4,
   },
   dayContainer: {
-    marginVertical: 10,
-    padding: 10,
-    backgroundColor: 'lightgray',
-    borderRadius: 5,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   dayText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 8,
+    color: 'purple',
   },
   recipeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  recipeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
     backgroundColor: 'white',
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
+    borderRadius: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  recipeTextContainer: {
-    flex: 1,
+  recipeImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 4,
+    marginRight: 8,
   },
-  recipeText: {
-    fontSize: 14,
+  recipeLabel: {
+    fontSize: 16,
+    color: 'purple',
   },
   deleteButton: {
-    marginLeft: 10,
+    padding: 8,
   },
   addRecipeButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
+    justifyContent: 'center',
+    paddingVertical: 8,
+    backgroundColor: 'purple',
+    borderRadius: 4,
+    marginTop: 8,
   },
   addRecipeButtonText: {
-    marginLeft: 5,
-    color: 'purple',
-  },
-  closeButton: {
-    backgroundColor: 'purple',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    margin: 20,
-  },
-  closeButtonText: {
-    color: 'white',
+    color: '#fff',
+    marginLeft: 4,
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     backgroundColor: 'white',
-    borderRadius: 10,
     padding: 20,
-    alignItems: 'center',
+    borderRadius: 10,
+    width: '90%',
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: 'purple',
   },
-  input: {
-    width: '100%',
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
     borderColor: 'gray',
     borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginVertical: 10,
+    marginRight: 10,
+    paddingHorizontal: 10,
   },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
+  loadingText: {
+    textAlign: 'center',
+    marginBottom: 10,
   },
-  saveButton: {
-    backgroundColor: 'purple',
-    padding: 10,
-    borderRadius: 5,
+  closeButton: {
+    marginTop: 10,
     alignItems: 'center',
-    flex: 1,
-    marginRight: 5,
   },
-  saveButtonText: {
-    color: 'white',
-  },
-  cancelButton: {
-    backgroundColor: 'gray',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    flex: 1,
-    marginLeft: 5,
-  },
-  cancelButtonText: {
-    color: 'white',
+  closeButtonText: {
+    color: 'purple',
+    fontSize: 16,
   },
 });
 
