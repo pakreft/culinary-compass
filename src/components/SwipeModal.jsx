@@ -1,5 +1,3 @@
-// TODO: Check, if recipe is favorit?
-// TODO: Add picture
 import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
@@ -14,35 +12,48 @@ import {
 import { Icon } from 'react-native-elements';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../constants/colors';
-import ShoppingListContext from '../contexts/ShoppingListContext'; // Von Lennard: Handling, dass Items an die Einkaufliste geschickt werden können
+import { useFavorites } from '../contexts/FavoritesContext';
+import ShoppingListContext from '../contexts/ShoppingListContext';
 
 const { height } = Dimensions.get('window');
 
 const SwipeModal = ({ visible, onClose, recipe }) => {
   const [pan] = useState(new Animated.ValueXY(0, 0));
   const [portions, setPortions] = useState(1);
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     if (recipe) {
       setPortions(1);
-      setIsFavorite(false);
+      setIsFavorite(favorites.some((fav) => fav.label === recipe.label));
     }
-  }, [recipe]);
+  }, [recipe, favorites]);
 
   const incrementPortions = () => setPortions(portions + 1);
   const decrementPortions = () => setPortions(portions > 1 ? portions - 1 : 1);
-  const toggleFavorite = () => setIsFavorite(!isFavorite);
+  const toggleFavorite = () => {
+    if (isFavorite) {
+      removeFavorite(recipe);
+    } else {
+      addFavorite(recipe);
+    }
+    setIsFavorite(!isFavorite);
+  };
+
   const favoriteIconName = isFavorite ? 'favorite' : 'favorite-outline';
 
-  // Neuer Code von Lennard für Einkaufsliste --->
-  // handleAddItem aufrufen und Parameter ausfüllen, um Zutaten zur Einkaufsliste hinzuzufügen
   const { addItem } = useContext(ShoppingListContext);
   const handleAddItem = (name, category, amount, recipe) => {
-    const newItem = { name: name, category: category, amount: amount, done: false, recipe: recipe };
+    const newItem = {
+      name: name,
+      category: category,
+      amount: amount,
+      done: false,
+      recipe: recipe,
+    };
     addItem(newItem);
   };
-  // <--- Bis hierhin
 
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -148,8 +159,11 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
             <View style={styles.groceriesHeader}>
               <Text style={styles.groceriesTitle}>Ingredients</Text>
               <Pressable
-                // Von Lennard: Hier ein Beispiel, wie man Einträge hinzufügen würde.
-                // onPress={() => handleAddItem('Tomato', 'Gemüse', '200g', 'Salad')}
+                onPress={() =>
+                  recipe.ingredientLines.forEach((item) =>
+                    handleAddItem(item, 'default', 1, recipe),
+                  )
+                } // Hier Zutaten zur Einkaufsliste hinzufügen
                 style={({ pressed }) => [
                   styles.addToShoppingListBtn,
                   pressed && styles.pressedButton,
@@ -218,6 +232,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
               <Text style={styles.buttonText}>Instructions</Text>
             </Pressable>
           </View>
+
           <Pressable
             style={({ pressed }) => [
               styles.quitButton,
@@ -225,7 +240,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
             ]}
             onPress={onClose}
           >
-            <MaterialIcons name="close" size={30} color={colors.accent} />
+            <Text style={{ color: colors.accent }}>Close</Text>
           </Pressable>
         </View>
       </Animated.View>
@@ -236,23 +251,26 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
   },
   container: {
-    flex: 1,
-    backgroundColor: colors.primary,
+    height: '95%',
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
   },
   header: {
-    padding: 20,
-    marginBottom: 20,
-    backgroundColor: colors.header,
+    borderBottomWidth: 0.5,
+    borderBottomColor: colors.accent,
+    paddingBottom: 20,
   },
   title: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   recipeTitle: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 15,
   },
@@ -343,7 +361,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   nutrition: {
-    
     padding: 20,
   },
   nutritionTitle: {
