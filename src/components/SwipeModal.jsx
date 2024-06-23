@@ -20,7 +20,8 @@ const { height } = Dimensions.get('window');
 const SwipeModal = ({ visible, onClose, recipe }) => {
   const [pan] = useState(new Animated.ValueXY(0, 0));
   const [portions, setPortions] = useState(1);
-  const {favorites, addFavorite, removeFavorite } = useFavorites();
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
+  const { addItem } = useContext(ShoppingListContext);
   const [ingredients, setIngredients] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -33,17 +34,19 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   }, [recipe, favorites]);
 
   const updateIngredients = (newPortions) => {
-    const updatedIngredients = recipe.ingredients.map((ingredient) => {
-      const updatedQuantity =
-        (ingredient.quantity / recipe.yield) * newPortions;
-      const updatedWeight = (ingredient.weight / recipe.yield) * newPortions;
-      return {
-        ...ingredient,
-        quantity: updatedQuantity,
-        weight: updatedWeight,
-      };
-    });
-    setIngredients(updatedIngredients);
+    if (recipe) {
+      const updatedIngredients = recipe.ingredients.map((ingredient) => {
+        const updatedQuantity =
+          (ingredient.quantity / recipe.yield) * newPortions;
+        const updatedWeight = (ingredient.weight / recipe.yield) * newPortions;
+        return {
+          ...ingredient,
+          quantity: updatedQuantity,
+          weight: updatedWeight,
+        };
+      });
+      setIngredients(updatedIngredients);
+    }
   };
 
   const incrementPortions = () => {
@@ -69,11 +72,18 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
     setPortions(newPortions);
     updateIngredients(newPortions);
   };
+  const toggleFavorite = () => {
+    if (isFavorite) {
+      removeFavorite(recipe);
+    } else {
+      addFavorite(recipe);
+    }
+    setIsFavorite(!isFavorite);
+  };
 
-  const toggleFavorite = () => setIsFavorite(!isFavorite);
+  //const toggleFavorite = () => setIsFavorite(!isFavorite);
   const favoriteIconName = isFavorite ? 'favorite' : 'favorite-outline';
 
-  const { addItem } = useContext(ShoppingListContext);
   const handleAddItem = (name, category, amount, recipe) => {
     const newItem = {
       name: name,
@@ -108,10 +118,6 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
     outputRange: [1, 0.2],
     extrapolate: 'clamp',
   });
-
-  if (!recipe) {
-    return null;
-  }
 
   const handlePress = (category) => {
     console.log(category); // Zeigt die foodCategory in der Konsole an

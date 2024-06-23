@@ -2,9 +2,12 @@ import React from 'react';
 import { Card, Image, Text } from 'react-native-elements';
 import { TouchableOpacity, StyleSheet, View } from 'react-native'; // Import View
 
-const RecipeCard = ({ recipe, onPress }) => {
+const RecipeCard = ({ recipe = {}, onPress = () => {} }) => {
   return (
-    <TouchableOpacity onPress={() => onPress(recipe)} style={styles.cardContainer}>
+    <TouchableOpacity
+      onPress={() => onPress(recipe)}
+      style={styles.cardContainer}
+    >
       <Card containerStyle={styles.card}>
         <Image source={{ uri: recipe.image }} style={styles.image} />
         <Text style={styles.label}>{recipe.label}</Text>
