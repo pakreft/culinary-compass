@@ -84,12 +84,14 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   //const toggleFavorite = () => setIsFavorite(!isFavorite);
   const favoriteIconName = isFavorite ? 'favorite' : 'favorite-outline';
 
-  const handleAddItem = (name, category, amount, recipe) => {
+  const handleAddItem = (name, category, amount, measurement, count, recipe) => {
     const newItem = {
       name: name,
       category: category,
       amount: amount,
       done: false,
+      measurement: measurement,
+      count: count,
       recipe: recipe,
     };
     addItem(newItem);

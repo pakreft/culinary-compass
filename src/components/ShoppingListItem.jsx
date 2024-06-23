@@ -1,8 +1,17 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Button, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const ShoppingListItem = ({ item, onDelete, onToggleDone, showDeleteButton, mode }) => {
+const ShoppingListItem = ({ item, onToggleDone, onDelete, mode }) => {
+  const renderAmount = () => {
+    if (item.amount !== null) {
+      return `${item.amount}${item.measurement}`;
+    } else if (item.count !== null) {
+      return `${item.count} ${item.measurement}`;
+    }
+    return '';
+  };
+
   if (mode === "shopping") {
     return (
       <TouchableOpacity 
@@ -14,7 +23,7 @@ const ShoppingListItem = ({ item, onDelete, onToggleDone, showDeleteButton, mode
       >
         <View style={styles.itemInfo}>
           <Text style={[styles.itemText, item.done && styles.itemTextDone]}>{item.name}</Text>
-          <Text style={styles.itemAmount}>{item.amount}</Text>
+          <Text style={styles.itemAmount}>{renderAmount()}</Text>
         </View>
         <View style={styles.iconContainer}>
           {item.done ? (
@@ -28,23 +37,23 @@ const ShoppingListItem = ({ item, onDelete, onToggleDone, showDeleteButton, mode
   } else {
     return (
       <View style={styles.itemContainer}>
-        <View>
+        <View style={styles.itemInfo}>
           <Text style={styles.itemText}>{item.name}</Text>
-          <Text style={styles.itemAmount}>{item.amount}</Text>
+          <Text style={styles.itemAmount}>{renderAmount()}</Text>
         </View>
         <View style={styles.buttonsContainer}>
-          <View style={styles.buttonWrapper}>
-            <Button
-              title="Done"
-              color={item.done ? 'gray' : 'green'}
-              onPress={() => onToggleDone(item.id)}
-            />
-          </View>
-          {showDeleteButton && (
-            <View style={styles.buttonWrapper}>
-              <Button title="Delete" color="red" onPress={() => onDelete(item.id)} />
-            </View>
-          )}
+          <TouchableOpacity
+            style={[styles.button, item.done ? styles.buttonDone : styles.buttonNotDone]}
+            onPress={() => onToggleDone(item.id)}
+          >
+            <Text style={styles.buttonText}>{item.done ? 'Undo' : 'Done'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.buttonDelete]}
+            onPress={() => onDelete(item.id)}
+          >
+            <Text style={styles.buttonText}>Delete</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -84,8 +93,24 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: 'row',
   },
-  buttonWrapper: {
+  button: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
     marginLeft: 10,
+  },
+  buttonNotDone: {
+    backgroundColor: 'green',
+  },
+  buttonDone: {
+    backgroundColor: 'gray',
+  },
+  buttonDelete: {
+    backgroundColor: 'red',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 
