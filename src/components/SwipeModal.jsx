@@ -1,5 +1,3 @@
-// TODO: Check, if recipe is favorit?
-// TODO: Add picture
 import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
@@ -14,35 +12,88 @@ import {
 import { Icon } from 'react-native-elements';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../constants/colors';
-import ShoppingListContext from '../contexts/ShoppingListContext'; // Von Lennard: Handling, dass Items an die Einkaufliste geschickt werden können
+import { useFavorites } from '../contexts/FavoritesContext';
+import ShoppingListContext from '../contexts/ShoppingListContext';
 
 const { height } = Dimensions.get('window');
 
 const SwipeModal = ({ visible, onClose, recipe }) => {
   const [pan] = useState(new Animated.ValueXY(0, 0));
   const [portions, setPortions] = useState(1);
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
+  const { addItem } = useContext(ShoppingListContext);
+  const [ingredients, setIngredients] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     if (recipe) {
-      setPortions(1);
-      setIsFavorite(false);
+      setPortions(recipe.yield);
+      setIsFavorite(favorites.some((fav) => fav.label === recipe.label));
+      setIngredients(recipe.ingredients);
     }
-  }, [recipe]);
+  }, [recipe, favorites]);
 
-  const incrementPortions = () => setPortions(portions + 1);
-  const decrementPortions = () => setPortions(portions > 1 ? portions - 1 : 1);
-  const toggleFavorite = () => setIsFavorite(!isFavorite);
+  const updateIngredients = (newPortions) => {
+    if (recipe) {
+      const updatedIngredients = recipe.ingredients.map((ingredient) => {
+        const updatedQuantity =
+          (ingredient.quantity / recipe.yield) * newPortions;
+        const updatedWeight = (ingredient.weight / recipe.yield) * newPortions;
+        return {
+          ...ingredient,
+          quantity: updatedQuantity,
+          weight: updatedWeight,
+        };
+      });
+      setIngredients(updatedIngredients);
+    }
+  };
+
+  const incrementPortions = () => {
+    const newPortions = portions + 1;
+    setPortions(newPortions);
+    updateIngredients(newPortions);
+  };
+
+  if (!recipe) {
+    return null; // Wenn recipe null ist, wird die Modalansicht nicht gerendert
+  }
+
+  // Filtern und nur die gewünschten Nährstoffe anzeigen (Kalorien, Protein, Kohlenhydrate, Fett)
+  const nutritionItems = [
+    { label: 'Calories', total: Math.round(recipe.calories) },
+    ...recipe.digest.filter((item) =>
+      ['Protein', 'Carbs', 'Fat'].includes(item.label),
+    ),
+  ];
+
+  const decrementPortions = () => {
+    const newPortions = portions > 1 ? portions - 1 : 1;
+    setPortions(newPortions);
+    updateIngredients(newPortions);
+  };
+  const toggleFavorite = () => {
+    if (isFavorite) {
+      removeFavorite(recipe);
+    } else {
+      addFavorite(recipe);
+    }
+    setIsFavorite(!isFavorite);
+  };
+
+  //const toggleFavorite = () => setIsFavorite(!isFavorite);
   const favoriteIconName = isFavorite ? 'favorite' : 'favorite-outline';
 
-  // Neuer Code von Lennard für Einkaufsliste --->
-  // handleAddItem aufrufen und Parameter ausfüllen, um Zutaten zur Einkaufsliste hinzuzufügen
-  const { addItem } = useContext(ShoppingListContext);
   const handleAddItem = (name, category, amount, recipe) => {
-    const newItem = { name: name, category: category, amount: amount, done: false, recipe: recipe };
+    const newItem = {
+      name: name,
+      category: category,
+      amount: amount,
+      done: false,
+      recipe: recipe,
+    };
     addItem(newItem);
   };
-  // <--- Bis hierhin
 
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -68,8 +119,17 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
     extrapolate: 'clamp',
   });
 
-  if (!recipe) {
-    return null;
+  const handlePress = (category) => {
+    console.log(category); // Zeigt die foodCategory in der Konsole an
+  };
+
+  function roundToMaxOneDecimal(number) {
+    if (Number.isInteger(number)) {
+      return number;
+    } else {
+      let roundedNumber = parseFloat(number.toFixed(1));
+      return roundedNumber;
+    }
   }
 
   return (
@@ -148,8 +208,11 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
             <View style={styles.groceriesHeader}>
               <Text style={styles.groceriesTitle}>Ingredients</Text>
               <Pressable
-                // Von Lennard: Hier ein Beispiel, wie man Einträge hinzufügen würde.
-                // onPress={() => handleAddItem('Tomato', 'Gemüse', '200g', 'Salad')}
+                onPress={() =>
+                  recipe.ingredientLines.forEach((item) =>
+                    handleAddItem(item, 'default', 1, recipe),
+                  )
+                } // Hier Zutaten zur Einkaufsliste hinzufügen
                 style={({ pressed }) => [
                   styles.addToShoppingListBtn,
                   pressed && styles.pressedButton,
@@ -163,14 +226,38 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
                   size={25}
                   style={styles.addToShoppingListIcon}
                   color={colors.brightest}
+                  onPress={() => console.log(recipe.ingredients)}
                 />
               </Pressable>
             </View>
 
             <View style={styles.groceryItems}>
-              {recipe.ingredientLines.map((item, index) => (
+              {ingredients.map((item, index) => (
                 <View key={index} style={styles.groceryItem}>
-                  <Text style={styles.groceryText}>{item}</Text>
+                  <Pressable
+                    onPress={() => handlePress(item.foodCategory)}
+                    style={({ pressed }) => [
+                      {
+                        backgroundColor: pressed ? '#ddd' : 'black',
+                      },
+                      styles.pressable,
+                    ]}
+                  >
+                    <Text style={styles.buttonText}>
+                      {item.quantity === 0
+                        ? 'pinch of'
+                        : roundToMaxOneDecimal(item.quantity) + ' '}
+                      {item.measure === '<unit>' || item.measure === null
+                        ? ''
+                        : item.measure}{' '}
+                      - {item.food}{' '}
+                      {Math.round(item.weight) === 0
+                        ? ''
+                        : Math.round(item.weight) + ' '}
+                      g{' '}
+                    </Text>
+                  </Pressable>
+                  {/* <Text style={styles.groceryText}>{item}</Text> */}
                 </View>
               ))}
             </View>
@@ -179,7 +266,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
           <View style={styles.nutrition}>
             <Text style={styles.nutritionTitle}>Nutrition</Text>
             <View style={styles.nutritionItems}>
-              {recipe.digest.map((item, index) => (
+              {nutritionItems.map((item, index) => (
                 <View key={index} style={styles.nutritionItem}>
                   <Text style={styles.nutritionValue}>
                     {Math.round(item.total)}
@@ -218,6 +305,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
               <Text style={styles.buttonText}>Instructions</Text>
             </Pressable>
           </View>
+
           <Pressable
             style={({ pressed }) => [
               styles.quitButton,
@@ -225,7 +313,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
             ]}
             onPress={onClose}
           >
-            <MaterialIcons name="close" size={30} color={colors.accent} />
+            <Text style={{ color: colors.accent }}>Close</Text>
           </Pressable>
         </View>
       </Animated.View>
@@ -343,7 +431,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   nutrition: {
-    
     padding: 20,
   },
   nutritionTitle: {
