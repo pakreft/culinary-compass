@@ -8,6 +8,7 @@ import {
   PanResponder,
   Animated,
   Pressable,
+  ScrollView,
 } from 'react-native';
 import { Icon, Image } from 'react-native-elements';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -148,203 +149,201 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
       presentationStyle="formSheet"
       visible={visible}
     >
-      <Animated.View
+      {/* <Animated.View
         {...panResponder.panHandlers}
         style={[
           styles.modalContainer,
           { transform: [{ translateY: pan.y }], opacity },
         ]}
-      >
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <View style={styles.imageContainer}>
-              <Image
-                source={{ uri: recipe.image }}
-                style={styles.backgroundImage}
-                resizeMode="cover"
-              />
-            </View>
-            <View style={styles.imageOverlay} />
-            <View style={styles.headerInfo}>
-              <View style={styles.favoriteInfo}>
-                <Pressable
-                  onPress={toggleFavorite}
-                  style={({ pressed }) => [pressed && styles.pressedButton]}
-                >
-                  <MaterialIcons
-                    name={favoriteIcon}
-                    size={40}
-                    color={colors.accent}
-                  />
-                </Pressable>
-              </View>
-              {recipe.totalTime > 0 && (
-                <View style={styles.durationInfo}>
-                  <MaterialIcons
-                    name="timelapse"
-                    size={40}
-                    color={colors.accent}
-                    style={styles.durationIcon}
-                  />
-                  <Text style={styles.time}>
-                    {recipe.totalTime === 0
-                      ? 'n/a'
-                      : recipe.totalTime + ' Min.'}
-                  </Text>
-                  <Text style={styles.vegetarian}>
-                    {recipe.healthLabels.includes('Vegetarian')
-                      ? 'Vegetarian'
-                      : ''}
-                  </Text>
-                </View>
-              )}
-            </View>
+      > */}
+      <ScrollView style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={{ uri: recipe.image }}
+              style={styles.backgroundImage}
+              resizeMode="cover"
+            />
           </View>
-          <Text style={styles.recipeTitle}>{recipe.label}</Text>
-
-          <View style={styles.ingredients}>
-            <View style={styles.ingredientsAction}>
-              <View style={styles.portionsControl}>
-                <Text style={styles.portionsText}>Portions</Text>
-                <Pressable
-                  onPress={decrementPortions}
-                  style={({ pressed }) => [pressed && styles.pressedButton]}
-                >
-                  <Icon
-                    name="remove"
-                    size={30}
-                    color={colors.brightest}
-                    style={{
-                      backgroundColor: colors.accent,
-                      borderRadius: 40,
-                    }}
-                  />
-                </Pressable>
-                <Text style={styles.portionsNumber}>{portions}</Text>
-                <Pressable
-                  onPress={incrementPortions}
-                  style={({ pressed }) => [pressed && styles.pressedButton]}
-                >
-                  <Icon
-                    name="add"
-                    size={30}
-                    color={colors.brightest}
-                    style={{
-                      backgroundColor: colors.accent,
-                      borderRadius: 40,
-                    }}
-                  />
-                </Pressable>
-              </View>
+          <View style={styles.imageOverlay} />
+          <View style={styles.headerInfo}>
+            <View style={styles.favoriteInfo}>
               <Pressable
-                onPress={() =>
-                  recipe.ingredientLines.forEach((item) =>
-                    handleAddItem(item, 'default', 1, recipe),
-                  )
-                } // Hier Zutaten zur Einkaufsliste hinzufügen
-                style={({ pressed }) => [
-                  styles.addToShoppingListBtn,
-                  pressed && styles.pressedButton,
-                ]}
+                onPress={toggleFavorite}
+                style={({ pressed }) => [pressed && styles.pressedButton]}
               >
-                <Text style={styles.addToList}>
-                  Add all to {'\n'}shopping list
-                </Text>
                 <MaterialIcons
-                  name="add-shopping-cart"
-                  size={25}
-                  style={styles.addToShoppingListIcon}
-                  color={colors.brightest}
-                  onPress={() => console.log(recipe.ingredients)}
+                  name={favoriteIcon}
+                  size={40}
+                  color={colors.accent}
                 />
               </Pressable>
             </View>
+            {recipe.totalTime > 0 && (
+              <View style={styles.durationInfo}>
+                <MaterialIcons
+                  name="timelapse"
+                  size={40}
+                  color={colors.accent}
+                  style={styles.durationIcon}
+                />
+                <Text style={styles.time}>
+                  {recipe.totalTime === 0 ? 'n/a' : recipe.totalTime + ' Min.'}
+                </Text>
+                <Text style={styles.vegetarian}>
+                  {recipe.healthLabels.includes('Vegetarian')
+                    ? 'Vegetarian'
+                    : ''}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+        <Text style={styles.recipeTitle}>{recipe.label}</Text>
 
-            <View style={styles.groceryItems}>
-              {ingredients.map((item, index) => (
-                <View key={index} style={styles.groceryItem}>
-                  <Pressable
-                    onPress={() => handlePress(item.foodCategory)}
-                    style={({ pressed }) => [
-                      //styles.pressableButton,
-                      pressed && styles.pressedButton,
-                    ]}
-                  >
-                    <Text style={styles.groceriesText}>
-                      {item.quantity === 0
-                        ? 'pinch of'
-                        : roundToMaxOneDecimal(item.quantity) + 'x '}
-                      {item.measure === '<unit>' || item.measure === null
-                        ? ''
-                        : item.measure}{' '}
-                    </Text>
-                    <Text style={styles.groceriesText}>
-                      {item.food + ' '}
-                      {Math.round(item.weight) === 0
-                        ? ''
-                        : '(' + Math.round(item.weight) + 'g) '}
-                    </Text>
-                  </Pressable>
-                  {/* <Text style={styles.groceryText}>{item}</Text> */}
-                </View>
-              ))}
+        <View style={styles.ingredients}>
+          <View style={styles.ingredientsAction}>
+            <View style={styles.portionsControl}>
+              <Text style={styles.portionsText}>Portions</Text>
+              <Pressable
+                onPress={decrementPortions}
+                style={({ pressed }) => [pressed && styles.pressedButton]}
+              >
+                <Icon
+                  name="remove"
+                  size={30}
+                  color={colors.brightest}
+                  style={{
+                    backgroundColor: colors.accent,
+                    borderRadius: 40,
+                  }}
+                />
+              </Pressable>
+              <Text style={styles.portionsNumber}>{portions}</Text>
+              <Pressable
+                onPress={incrementPortions}
+                style={({ pressed }) => [pressed && styles.pressedButton]}
+              >
+                <Icon
+                  name="add"
+                  size={30}
+                  color={colors.brightest}
+                  style={{
+                    backgroundColor: colors.accent,
+                    borderRadius: 40,
+                  }}
+                />
+              </Pressable>
             </View>
+            <Pressable
+              onPress={() =>
+                recipe.ingredientLines.forEach((item) =>
+                  handleAddItem(item, 'default', 1, recipe),
+                )
+              } // Hier Zutaten zur Einkaufsliste hinzufügen
+              style={({ pressed }) => [
+                styles.addToShoppingListBtn,
+                pressed && styles.pressedButton,
+              ]}
+            >
+              <Text style={styles.addToList}>
+                Add all to {'\n'}shopping list
+              </Text>
+              <MaterialIcons
+                name="add-shopping-cart"
+                size={25}
+                style={styles.addToShoppingListIcon}
+                color={colors.brightest}
+                onPress={() => console.log(recipe.ingredients)}
+              />
+            </Pressable>
           </View>
 
-          <View style={styles.nutrition}>
-            <Text style={styles.nutritionTitle}>Nutrition</Text>
-            <View style={styles.nutritionItems}>
-              {nutritionItems.map((item, index) => (
-                <View key={index} style={styles.nutritionItem}>
-                  <Text style={styles.nutritionValue}>
-                    {Math.round(item.total)}
+          <View style={styles.groceryItems}>
+            {ingredients.map((item, index) => (
+              <View key={index} style={styles.groceryItem}>
+                <Pressable
+                  onPress={() => handlePress(item.foodCategory)}
+                  style={({ pressed }) => [
+                    //styles.pressableButton,
+                    pressed && styles.pressedButton,
+                  ]}
+                >
+                  <Text style={styles.groceriesText}>
+                    {item.quantity === 0
+                      ? 'pinch of'
+                      : roundToMaxOneDecimal(item.quantity) + 'x '}
+                    {item.measure === '<unit>' || item.measure === null
+                      ? ''
+                      : item.measure}{' '}
                   </Text>
-                  <Text style={styles.nutritionLabel}>{item.label}</Text>
-                </View>
-              ))}
-            </View>
+                  <Text style={styles.groceriesText}>
+                    {item.food + ' '}
+                    {Math.round(item.weight) === 0
+                      ? ''
+                      : '(' + Math.round(item.weight) + 'g) '}
+                  </Text>
+                </Pressable>
+                {/* <Text style={styles.groceryText}>{item}</Text> */}
+              </View>
+            ))}
           </View>
+        </View>
 
-          <View style={styles.instructionsButtons}>
-            <Pressable
-              style={({ pressed }) => [
-                styles.pressableButton,
-                pressed && styles.pressedButton,
-              ]}
-            >
-              <MaterialIcons
-                name="calendar-month"
-                size={24}
-                color={colors.brightest}
-              />
-              <Text style={styles.buttonText}>Plan</Text>
-            </Pressable>
-            <Pressable
-              style={({ pressed }) => [
-                styles.pressableButton,
-                pressed && styles.pressedButton,
-              ]}
-            >
-              <MaterialIcons
-                name="menu-book"
-                size={24}
-                color={colors.brightest}
-              />
-              <Text style={styles.buttonText}>Instructions</Text>
-            </Pressable>
+        <View style={styles.nutrition}>
+          <Text style={styles.nutritionTitle}>Nutrition</Text>
+          <View style={styles.nutritionItems}>
+            {nutritionItems.map((item, index) => (
+              <View key={index} style={styles.nutritionItem}>
+                <Text style={styles.nutritionValue}>
+                  {Math.round(item.total)}
+                </Text>
+                <Text style={styles.nutritionLabel}>{item.label}</Text>
+              </View>
+            ))}
           </View>
+        </View>
 
+        <View style={styles.instructionsButtons}>
           <Pressable
             style={({ pressed }) => [
-              styles.quitButton,
+              styles.pressableButton,
               pressed && styles.pressedButton,
             ]}
-            onPress={onClose}
           >
-            <Text style={{ color: colors.accent }}>Close</Text>
+            <MaterialIcons
+              name="calendar-month"
+              size={24}
+              color={colors.brightest}
+            />
+            <Text style={styles.buttonText}>Plan</Text>
+          </Pressable>
+          <Pressable
+            style={({ pressed }) => [
+              styles.pressableButton,
+              pressed && styles.pressedButton,
+            ]}
+          >
+            <MaterialIcons
+              name="menu-book"
+              size={24}
+              color={colors.brightest}
+            />
+            <Text style={styles.buttonText}>Instructions</Text>
           </Pressable>
         </View>
-      </Animated.View>
+
+        <Pressable
+          style={({ pressed }) => [
+            styles.quitButton,
+            pressed && styles.pressedButton,
+          ]}
+          onPress={onClose}
+        >
+          <Text style={{ color: colors.accent }}>Close</Text>
+        </Pressable>
+      </ScrollView>
+      {/* </Animated.View> */}
     </Modal>
   );
 };
@@ -352,10 +351,13 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    //justifyContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
-    flex: 1,
+    flexGrow: 1,
+    //justifyContent: 'center',
+    //alignItems: 'center',
     backgroundColor: colors.primary,
   },
   imageContainer: {
