@@ -1,9 +1,8 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Button, Switch } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import ShoppingListContext from '../../contexts/ShoppingListContext';
 import ShoppingListItem from '../../components/ShoppingListItem';
-
 
 const ShoppingListScreen = () => {
   const { items, categories, recipes, deleteItem, toggleItemDone } = useContext(ShoppingListContext);
@@ -39,15 +38,15 @@ const ShoppingListScreen = () => {
     );
   };
 
-const categorizedItems = categories?.map((category) => ({
-  category,
-  items: items.filter((item) => item.category === category),
-})) || [];
+  const categorizedItems = categories?.map((category) => ({
+    category,
+    items: items.filter((item) => item.category === category),
+  })) || [];
 
-const recipeItems = recipes?.map((recipe) => ({
-  recipe,
-  items: items.filter((item) => item.recipe === recipe),
-})) || [];
+  const recipeItems = recipes?.map((recipe) => ({
+    recipe,
+    items: items.filter((item) => item.recipe === recipe),
+  })) || [];
 
   return (
     <View style={styles.container}>
