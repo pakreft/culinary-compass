@@ -21,7 +21,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   const [pan] = useState(new Animated.ValueXY(0, 0));
   const [portions, setPortions] = useState(1);
   const { favorites, addFavorite, removeFavorite } = useFavorites();
-  const { addItem } = useContext(ShoppingListContext); /// Neuer Code von Lennard  
+  const { addItem } = useContext(ShoppingListContext); /// Neuer Code von Lennard
   const [ingredients, setIngredients] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -82,10 +82,17 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   };
 
   //const toggleFavorite = () => setIsFavorite(!isFavorite);
-  const favoriteIconName = isFavorite ? 'favorite' : 'favorite-outline';
+  const favoriteIcon = isFavorite ? 'favorite' : 'favorite-outline';
 
   // Von Lennard: handleAddItem aufrufen und Parameter ausfüllen, um Zutaten zur Einkaufsliste hinzuzufügen
-  const handleAddItem = (name, category, amount, measurement, count, recipe) => {
+  const handleAddItem = (
+    name,
+    category,
+    amount,
+    measurement,
+    count,
+    recipe,
+  ) => {
     const newItem = {
       name: name,
       category: category,
@@ -151,42 +158,54 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.imageContainer}>
-              <Image source={{ uri: recipe.image }} style={styles.backgroundImage} resizeMode="cover"/>
+              <Image
+                source={{ uri: recipe.image }}
+                style={styles.backgroundImage}
+                resizeMode="cover"
+              />
             </View>
             <View style={styles.imageOverlay} />
             <View style={styles.headerInfo}>
-              <View style={styles.info}>
-                <MaterialIcons
-                  name="timelapse"
-                  size={40}
-                  color={colors.accent}
-                  style={styles.timeBtn}
-                />
-                <Text style={styles.time}>{recipe.totalTime} Min.</Text>
-                <Text style={styles.vegetarian}>
-                  {recipe.healthLabels.includes('Vegetarian') ? 'Vegetarian' : ''}
-                </Text>
+              <View style={styles.favoriteInfo}>
+                <Pressable
+                  onPress={toggleFavorite}
+                  style={({ pressed }) => [pressed && styles.pressedButton]}
+                >
+                  <MaterialIcons
+                    name={favoriteIcon}
+                    size={40}
+                    color={colors.accent}
+                  />
+                </Pressable>
               </View>
-              <Pressable
-                onPress={toggleFavorite}
-                style={({ pressed }) => [pressed && styles.pressedButton]}
-              >
-                <MaterialIcons
-                  name={favoriteIconName}
-                  size={35}
-                  color={colors.accent}
-                  style={{ paddingRight: 15 }}
-                />
-              </Pressable>
+              {recipe.totalTime > 0 && (
+                <View style={styles.durationInfo}>
+                  <MaterialIcons
+                    name="timelapse"
+                    size={40}
+                    color={colors.accent}
+                    style={styles.durationIcon}
+                  />
+                  <Text style={styles.time}>
+                    {recipe.totalTime === 0
+                      ? 'n/a'
+                      : recipe.totalTime + ' Min.'}
+                  </Text>
+                  <Text style={styles.vegetarian}>
+                    {recipe.healthLabels.includes('Vegetarian')
+                      ? 'Vegetarian'
+                      : ''}
+                  </Text>
+                </View>
+              )}
             </View>
-            
           </View>
           <Text style={styles.recipeTitle}>{recipe.label}</Text>
 
           <View style={styles.ingredients}>
-            <View style={styles.portions}>
-              <Text style={styles.portionsText}>Portions</Text>
+            <View style={styles.ingredientsAction}>
               <View style={styles.portionsControl}>
+                <Text style={styles.portionsText}>Portions</Text>
                 <Pressable
                   onPress={decrementPortions}
                   style={({ pressed }) => [pressed && styles.pressedButton]}
@@ -195,7 +214,10 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
                     name="remove"
                     size={30}
                     color={colors.brightest}
-                    style={{ backgroundColor: colors.accent, borderRadius: 40 }}
+                    style={{
+                      backgroundColor: colors.accent,
+                      borderRadius: 40,
+                    }}
                   />
                 </Pressable>
                 <Text style={styles.portionsNumber}>{portions}</Text>
@@ -207,15 +229,13 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
                     name="add"
                     size={30}
                     color={colors.brightest}
-                    style={{ backgroundColor: colors.accent, borderRadius: 40 }}
+                    style={{
+                      backgroundColor: colors.accent,
+                      borderRadius: 40,
+                    }}
                   />
                 </Pressable>
               </View>
-            </View>
-
-          
-            <View style={styles.groceriesHeader}>
-              <Text style={styles.groceriesTitle}>Ingredients</Text>
               <Pressable
                 onPress={() =>
                   recipe.ingredientLines.forEach((item) =>
@@ -246,24 +266,23 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
                   <Pressable
                     onPress={() => handlePress(item.foodCategory)}
                     style={({ pressed }) => [
-                      {
-                        backgroundColor: pressed ? '#ddd' : 'black',
-                      },
-                      styles.pressable,
+                      //styles.pressableButton,
+                      pressed && styles.pressedButton,
                     ]}
                   >
-                    <Text style={styles.buttonText}>
+                    <Text style={styles.groceriesText}>
                       {item.quantity === 0
                         ? 'pinch of'
-                        : roundToMaxOneDecimal(item.quantity) + ' '}
+                        : roundToMaxOneDecimal(item.quantity) + 'x '}
                       {item.measure === '<unit>' || item.measure === null
                         ? ''
                         : item.measure}{' '}
-                      - {item.food}{' '}
+                    </Text>
+                    <Text style={styles.groceriesText}>
+                      {item.food + ' '}
                       {Math.round(item.weight) === 0
                         ? ''
-                        : Math.round(item.weight) + ' '}
-                      g{' '}
+                        : '(' + Math.round(item.weight) + 'g) '}
                     </Text>
                   </Pressable>
                   {/* <Text style={styles.groceryText}>{item}</Text> */}
@@ -348,31 +367,29 @@ const styles = StyleSheet.create({
     //justifyContent: 'center',
     //alignItems: 'center',
     zIndex: -1,
-
   },
   backgroundImage: {
     //alignSelf: 'center',
-     width: '100%',
-     height: '100%',
+    width: '100%',
+    height: '100%',
     //width: 100,
-    borderBottomLeftRadius: 100, // Radius für die untere linke Ecke
-    borderBottomRightRadius: 100, 
-
+    borderBottomLeftRadius: 120, // Radius für die untere linke Ecke
+    borderBottomRightRadius: 120,
   },
   imageOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(255, 255, 255, 0.1)', // Optional: To add a dark overlay for better text readability
     borderBottomLeftRadius: 100, // Radius für die untere linke Ecke
-    borderBottomRightRadius: 100, 
+    borderBottomRightRadius: 100,
   },
   header: {
-    height: 200,
-    padding: 20,
+    height: 220,
+    paddingTop: 20,
     //marginBottom: 20,
     //position: 'relative',
   },
   headerInfo: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'space-between',
   },
   recipeTitle: {
@@ -381,18 +398,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  info: {
+  durationInfo: {
+    paddingHorizontal: 15,
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    marginVertical: 10,
+    alignItems: 'center', //vertikales zentrieren
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderBottomRightRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  durationIcon: {
+    //bottom: 10,
+    marginRight: 10,
   },
   time: {
     fontSize: 16,
     marginRight: 20,
-  },
-  timeBtn: {
-    bottom: 10,
-    marginRight: 10,
   },
   vegetarian: {
     fontSize: 16,
@@ -400,6 +420,13 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
+  },
+  favoriteInfo: {
+    padding: 8,
+    paddingHorizontal: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
   },
   buttonText: {
     color: colors.brightest,
@@ -410,19 +437,18 @@ const styles = StyleSheet.create({
     backgroundColor: colors.brightest,
   },
 
-  portions: {
+  ingredientsAction: {
     //paddingHorizontal: 20,
     flexDirection: 'row',
-    //justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    //alignItems: 'center',
     marginBottom: 20,
-
   },
   portionsText: {
     fontSize: 18,
+    paddingRight: 10,
   },
   portionsControl: {
-    paddingLeft: 10,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -437,6 +463,10 @@ const styles = StyleSheet.create({
   groceriesTitle: {
     fontSize: 18,
     marginBottom: 10,
+  },
+  groceriesText: {
+    color: 'black',
+    textAlign: 'center',
   },
   addToList: {
     color: colors.accent,
@@ -463,7 +493,7 @@ const styles = StyleSheet.create({
   groceryItem: {
     alignItems: 'center',
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 20,
     margin: 3,
     backgroundColor: colors.secondary,
   },
