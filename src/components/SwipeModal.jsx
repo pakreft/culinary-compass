@@ -9,11 +9,11 @@ import {
   Animated,
   Pressable,
 } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { Icon, Image } from 'react-native-elements';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../constants/colors';
 import { useFavorites } from '../contexts/FavoritesContext';
-import ShoppingListContext from '../contexts/ShoppingListContext';
+import ShoppingListContext from '../contexts/ShoppingListContext'; /// Von Lennard: Handling, dass Items an die Einkaufliste geschickt werden können
 
 const { height } = Dimensions.get('window');
 
@@ -21,7 +21,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   const [pan] = useState(new Animated.ValueXY(0, 0));
   const [portions, setPortions] = useState(1);
   const { favorites, addFavorite, removeFavorite } = useFavorites();
-  const { addItem } = useContext(ShoppingListContext);
+  const { addItem } = useContext(ShoppingListContext); /// Neuer Code von Lennard  
   const [ingredients, setIngredients] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -84,6 +84,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   //const toggleFavorite = () => setIsFavorite(!isFavorite);
   const favoriteIconName = isFavorite ? 'favorite' : 'favorite-outline';
 
+  // Von Lennard: handleAddItem aufrufen und Parameter ausfüllen, um Zutaten zur Einkaufsliste hinzuzufügen
   const handleAddItem = (name, category, amount, measurement, count, recipe) => {
     const newItem = {
       name: name,
@@ -149,8 +150,23 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
       >
         <View style={styles.container}>
           <View style={styles.header}>
-            <View style={styles.title}>
-              <Text style={styles.recipeTitle}>{recipe.label}</Text>
+            <View style={styles.imageContainer}>
+              <Image source={{ uri: recipe.image }} style={styles.backgroundImage} resizeMode="cover"/>
+            </View>
+            <View style={styles.imageOverlay} />
+            <View style={styles.headerInfo}>
+              <View style={styles.info}>
+                <MaterialIcons
+                  name="timelapse"
+                  size={40}
+                  color={colors.accent}
+                  style={styles.timeBtn}
+                />
+                <Text style={styles.time}>{recipe.totalTime} Min.</Text>
+                <Text style={styles.vegetarian}>
+                  {recipe.healthLabels.includes('Vegetarian') ? 'Vegetarian' : ''}
+                </Text>
+              </View>
               <Pressable
                 onPress={toggleFavorite}
                 style={({ pressed }) => [pressed && styles.pressedButton]}
@@ -163,50 +179,41 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
                 />
               </Pressable>
             </View>
-            <View style={styles.info}>
-              <MaterialIcons
-                name="timelapse"
-                size={40}
-                color={colors.accent}
-                style={styles.timeBtn}
-              />
-              <Text style={styles.time}>{recipe.totalTime} Min.</Text>
-              <Text style={styles.vegetarian}>
-                {recipe.healthLabels.includes('Vegetarian') ? 'Vegetarian' : ''}
-              </Text>
-            </View>
+            
           </View>
+          <Text style={styles.recipeTitle}>{recipe.label}</Text>
 
-          <View style={styles.portions}>
-            <Text style={styles.portionsText}>Portions</Text>
-            <View style={styles.portionsControl}>
-              <Pressable
-                onPress={decrementPortions}
-                style={({ pressed }) => [pressed && styles.pressedButton]}
-              >
-                <Icon
-                  name="remove"
-                  size={30}
-                  color={colors.brightest}
-                  style={{ backgroundColor: colors.accent, borderRadius: 40 }}
-                />
-              </Pressable>
-              <Text style={styles.portionsNumber}>{portions}</Text>
-              <Pressable
-                onPress={incrementPortions}
-                style={({ pressed }) => [pressed && styles.pressedButton]}
-              >
-                <Icon
-                  name="add"
-                  size={30}
-                  color={colors.brightest}
-                  style={{ backgroundColor: colors.accent, borderRadius: 40 }}
-                />
-              </Pressable>
+          <View style={styles.ingredients}>
+            <View style={styles.portions}>
+              <Text style={styles.portionsText}>Portions</Text>
+              <View style={styles.portionsControl}>
+                <Pressable
+                  onPress={decrementPortions}
+                  style={({ pressed }) => [pressed && styles.pressedButton]}
+                >
+                  <Icon
+                    name="remove"
+                    size={30}
+                    color={colors.brightest}
+                    style={{ backgroundColor: colors.accent, borderRadius: 40 }}
+                  />
+                </Pressable>
+                <Text style={styles.portionsNumber}>{portions}</Text>
+                <Pressable
+                  onPress={incrementPortions}
+                  style={({ pressed }) => [pressed && styles.pressedButton]}
+                >
+                  <Icon
+                    name="add"
+                    size={30}
+                    color={colors.brightest}
+                    style={{ backgroundColor: colors.accent, borderRadius: 40 }}
+                  />
+                </Pressable>
+              </View>
             </View>
-          </View>
 
-          <View style={styles.groceries}>
+          
             <View style={styles.groceriesHeader}>
               <Text style={styles.groceriesTitle}>Ingredients</Text>
               <Pressable
@@ -326,25 +333,53 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
+    //justifyContent: 'center',
   },
   container: {
     flex: 1,
     backgroundColor: colors.primary,
   },
-  header: {
-    padding: 20,
-    marginBottom: 20,
-    backgroundColor: colors.header,
+  imageContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    //justifyContent: 'center',
+    //alignItems: 'center',
+    zIndex: -1,
+
   },
-  title: {
+  backgroundImage: {
+    //alignSelf: 'center',
+     width: '100%',
+     height: '100%',
+    //width: 100,
+    borderBottomLeftRadius: 100, // Radius für die untere linke Ecke
+    borderBottomRightRadius: 100, 
+
+  },
+  imageOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Optional: To add a dark overlay for better text readability
+    borderBottomLeftRadius: 100, // Radius für die untere linke Ecke
+    borderBottomRightRadius: 100, 
+  },
+  header: {
+    height: 200,
+    padding: 20,
+    //marginBottom: 20,
+    //position: 'relative',
+  },
+  headerInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   recipeTitle: {
-    fontSize: 30,
+    alignSelf: 'center',
+    fontSize: 35,
     fontWeight: 'bold',
-    marginBottom: 15,
+    marginBottom: 10,
   },
   info: {
     flexDirection: 'row',
@@ -370,27 +405,30 @@ const styles = StyleSheet.create({
     color: colors.brightest,
     marginLeft: 5,
   },
+  ingredients: {
+    padding: 20,
+    backgroundColor: colors.brightest,
+  },
+
   portions: {
-    paddingHorizontal: 20,
+    //paddingHorizontal: 20,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    //justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
+
   },
   portionsText: {
     fontSize: 18,
   },
   portionsControl: {
+    paddingLeft: 10,
     flexDirection: 'row',
     alignItems: 'center',
   },
   portionsNumber: {
     fontSize: 18,
     marginHorizontal: 10,
-  },
-  groceries: {
-    padding: 20,
-    backgroundColor: colors.brightest,
   },
   groceriesHeader: {
     flexDirection: 'row',
