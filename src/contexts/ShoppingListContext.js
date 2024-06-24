@@ -24,9 +24,13 @@ export const ShoppingListProvider = ({ children }) => {
   const [recipes, setRecipes] = useState(initialRecipes);
 
   const addItem = (newItem) => {
+    console.log("funktion started");
     newItem.id = nextId.toString();
+    console.log("id für das objekt wurde gesetzt");
+    setNextId(nextId.toString());
+    console.log("id wurde inkrementiert");
     setItems((prevItems) => [...prevItems, newItem]);
-    setNextId(nextId + 1);
+    console.log("objekt wurde hinzugefügt");
 
     if (!categories.includes(newItem.category)) {
       setCategories((prevCategories) => [...prevCategories, newItem.category]);
@@ -35,6 +39,7 @@ export const ShoppingListProvider = ({ children }) => {
     if (!recipes.includes(newItem.recipe)) {
       setRecipes((prevRecipes) => [...prevRecipes, newItem.recipe]);
     }
+    console.log(items.length);
   };
 
   const deleteItem = (itemId) => {
@@ -52,9 +57,14 @@ export const ShoppingListProvider = ({ children }) => {
       if (isLastInRecipe) {
         setRecipes((prevRecipes) => prevRecipes.filter((recipe) => recipe !== itemToDelete.recipe));
       }
-
+      console.log(updatedItems);
       return updatedItems;
     });
+    
+  };
+
+  const newRecipe = (recipe) => {
+    console.log(recipe);
   };
 
   const toggleItemDone = (itemId) => {
@@ -80,6 +90,7 @@ export const ShoppingListProvider = ({ children }) => {
       recipes,
       addItem,
       deleteItem,
+      newRecipe,
       toggleItemDone,
       updateItemAmount
     }}>
