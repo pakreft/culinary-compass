@@ -53,7 +53,6 @@ const PlannedScreen = ({ navigation }) => {
 
   const handleAddItem = (name, category, amount, recipe) => {
     const newItem = {
-      id: `${recipe}-${name}`, // Generiere eine eindeutige ID
       name: name,
       category: category,
       amount: amount,

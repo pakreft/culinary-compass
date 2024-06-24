@@ -27,13 +27,11 @@ const PlanningModeItem = ({ item, onDelete, onToggleDone }) => (
   />
 );
 
-// Felix TEst
 const CategoryView = () => {
-  const { items, categories, deleteItem, toggleItemDone } =
-    useContext(ShoppingListContext);
+  const { items, categories, deleteItem, toggleItemDone } = useContext(ShoppingListContext);
 
   const renderCategory = ({ item }) => {
-    const sortedItems = item.items.filter((i) => !i.done);
+    const sortedItems = item.items.filter(i => !i.done);
     return (
       <View style={styles.categoryContainer}>
         <Text style={styles.categoryTitle}>{item.category}</Text>
@@ -42,7 +40,7 @@ const CategoryView = () => {
           renderItem={({ item }) => (
             <ShoppingModeItem
               item={item}
-              onToggleDone={() => toggleItemDone(item.id)}
+              onToggleDone={toggleItemDone}
             />
           )}
           keyExtractor={(item) => item.id}
@@ -51,16 +49,15 @@ const CategoryView = () => {
     );
   };
 
-  const categorizedItems =
-    categories?.map((category) => ({
-      category,
-      items: items.filter((item) => item.category === category),
-    })) || [];
+  const categorizedItems = categories?.map((category) => ({
+    category,
+    items: items.filter((item) => item.category === category),
+  })) || [];
 
-  const doneItems = items.filter((item) => item.done);
+  const doneItems = items.filter(item => item.done);
 
   const removeAllDoneItems = () => {
-    doneItems.forEach((item) => deleteItem(item.id));
+    doneItems.forEach(item => deleteItem(item.id));
   };
 
   return (
@@ -73,19 +70,14 @@ const CategoryView = () => {
             renderItem={({ item }) => (
               <ShoppingModeItem
                 item={item}
-                onToggleDone={() => toggleItemDone(item.id)}
+                onToggleDone={toggleItemDone}
               />
             )}
             keyExtractor={(item) => item.id}
           />
           {doneItems.length > 0 && (
-            <TouchableOpacity
-              style={styles.removeAllButton}
-              onPress={removeAllDoneItems}
-            >
-              <Text style={styles.removeAllButtonText}>
-                Remove All Done Items
-              </Text>
+            <TouchableOpacity style={styles.removeAllButton} onPress={removeAllDoneItems}>
+              <Text style={styles.removeAllButtonText}>Remove All Done Items</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -98,8 +90,7 @@ const CategoryView = () => {
 };
 
 const RecipeView = () => {
-  const { items, recipes, deleteItem, toggleItemDone } =
-    useContext(ShoppingListContext);
+  const { items, recipes, deleteItem, toggleItemDone } = useContext(ShoppingListContext);
 
   const renderRecipe = ({ item }) => {
     const sortedItems = item.items.sort((a, b) => a.done - b.done);
@@ -111,8 +102,8 @@ const RecipeView = () => {
           renderItem={({ item }) => (
             <PlanningModeItem
               item={item}
-              onDelete={() => deleteItem(item.id)}
-              onToggleDone={() => toggleItemDone(item.id)}
+              onDelete={deleteItem}
+              onToggleDone={toggleItemDone}
             />
           )}
           keyExtractor={(item) => item.id}
@@ -121,11 +112,10 @@ const RecipeView = () => {
     );
   };
 
-  const recipeItems =
-    recipes?.map((recipe) => ({
-      recipe,
-      items: items.filter((item) => item.recipe === recipe),
-    })) || [];
+  const recipeItems = recipes?.map((recipe) => ({
+    recipe,
+    items: items.filter((item) => item.recipe === recipe),
+  })) || [];
 
   return (
     <FlatList
@@ -135,107 +125,6 @@ const RecipeView = () => {
     />
   );
 };
-
-// Test ende
-
-// const CategoryView = () => {
-//   const { items, categories, deleteItem, toggleItemDone } = useContext(ShoppingListContext);
-
-//   const renderCategory = ({ item }) => {
-//     const sortedItems = item.items.filter(i => !i.done);
-//     return (
-//       <View style={styles.categoryContainer}>
-//         <Text style={styles.categoryTitle}>{item.category}</Text>
-//         <FlatList
-//           data={sortedItems}
-//           renderItem={({ item }) => (
-//             <ShoppingModeItem
-//               item={item}
-//               onToggleDone={toggleItemDone}
-//             />
-//           )}
-//           keyExtractor={(item) => item.id}
-//         />
-//       </View>
-//     );
-//   };
-
-//   const categorizedItems = categories?.map((category) => ({
-//     category,
-//     items: items.filter((item) => item.category === category),
-//   })) || [];
-
-//   const doneItems = items.filter(item => item.done);
-
-//   const removeAllDoneItems = () => {
-//     doneItems.forEach(item => deleteItem(item.id));
-//   };
-
-//   return (
-//     <FlatList
-//       ListFooterComponent={
-//         <View style={styles.categoryContainer}>
-//           <Text style={styles.categoryTitle}>Done</Text>
-//           <FlatList
-//             data={doneItems}
-//             renderItem={({ item }) => (
-//               <ShoppingModeItem
-//                 item={item}
-//                 onToggleDone={toggleItemDone}
-//               />
-//             )}
-//             keyExtractor={(item) => item.id}
-//           />
-//           {doneItems.length > 0 && (
-//             <TouchableOpacity style={styles.removeAllButton} onPress={removeAllDoneItems}>
-//               <Text style={styles.removeAllButtonText}>Remove All Done Items</Text>
-//             </TouchableOpacity>
-//           )}
-//         </View>
-//       }
-//       data={categorizedItems}
-//       renderItem={renderCategory}
-//       keyExtractor={(item) => item.category}
-//     />
-//   );
-// };
-
-// const RecipeView = () => {
-//   const { items, recipes, deleteItem, toggleItemDone } = useContext(ShoppingListContext);
-
-//   const renderRecipe = ({ item }) => {
-//     const sortedItems = item.items.sort((a, b) => a.done - b.done);
-//     return (
-//       <View style={styles.categoryContainer}>
-//         <Text style={styles.categoryTitle}>{item.recipe}</Text>
-//         <FlatList
-//           data={sortedItems}
-//           renderItem={({ item }) => (
-//             <PlanningModeItem
-//               item={item}
-//               onDelete={deleteItem}
-//               onToggleDone={toggleItemDone}
-//             />
-//           )}
-//           keyExtractor={(item) => item.id}
-//         />
-//       </View>
-//     );
-//   };
-
-//   const recipeItems = recipes?.map((recipe) => ({
-//     recipe,
-//     items: items.filter((item) => item.recipe === recipe),
-//   })) || [];
-
-//   return (
-//     <FlatList
-//       data={recipeItems}
-//       renderItem={renderRecipe}
-//       keyExtractor={(item) => item.recipe}
-//     />
-//   );
-// };
 
 const ShoppingListScreen = () => {
   const [currentTab, setCurrentTab] = useState('Shopping Mode');
