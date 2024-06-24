@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import { getRecipes } from '../../api/edamam';
 import SwipeModal from '../../components/SwipeModal';
+import DefaultSearchBar from '../../components/DefaultSearchBar/DefaultSearchBar';
+import SearchRecipesButton from '../../components/SearchRecipesButton';
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
@@ -42,6 +44,16 @@ export default function SearchScreen() {
   };
 
   return (
+    <View style={styles.screenContainer}>
+      <View style={styles.inputContainer}>
+        <DefaultSearchBar />
+      </View>
+      <View style={styles.listContainer}></View>
+      <View style={styles.buttonContainer}>
+        <SearchRecipesButton />
+      </View>
+    </View>
+    /**
     <View style={styles.container}>
       <Text style={styles.title}>Search Recipes</Text>
       <TextInput
@@ -70,11 +82,28 @@ export default function SearchScreen() {
         onClose={closeRecipeModal}
         recipe={selectedRecipe}
       />
-    </View>
+    </View> */
   );
 }
 
 const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    padding: 10,
+  },
+  inputContainer: {
+    backgroundColor: 'red',
+  },
+  listContainer: {
+    flex: 1,
+    backgroundColor: 'blue',
+  },
+  buttonContainer: {
+    backgroundColor: 'yellow',
+  },
+});
+
+/**const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
@@ -102,3 +131,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+*/
