@@ -1,3 +1,5 @@
+//TODO: Nutrition groesse anpassen
+//TODO: einzelne Items an die Shopping List senden Zeile 128
 import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
@@ -16,8 +18,6 @@ import colors from '../constants/colors';
 import { useFavorites } from '../contexts/FavoritesContext';
 import ShoppingListContext from '../contexts/ShoppingListContext'; /// Von Lennard: Handling, dass Items an die Einkaufliste geschickt werden können
 
-const { height } = Dimensions.get('window');
-
 const SwipeModal = ({ visible, onClose, recipe }) => {
   const [pan] = useState(new Animated.ValueXY(0, 0));
   const [portions, setPortions] = useState(1);
@@ -25,6 +25,8 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   const { addItem, newRecipe } = useContext(ShoppingListContext); /// Neuer Code von Lennard
   const [ingredients, setIngredients] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
+
+  const { height } = Dimensions.get('window');
 
   useEffect(() => {
     if (recipe) {
@@ -120,8 +122,10 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
     extrapolate: 'clamp',
   });
 
-  const handlePressIngredient = (category) => {
-    console.log(category); // TODO: Daten an Shopping List uebersenden ????
+  const handlePressIngredient = (ingredient, index) => {
+    console.log(recipe.label);
+    // TODO: diese Zutat an Shopping List uebersenden
+    //addItem(ingredient, index);
   };
 
   function roundToMaxOneDecimal(number) {
@@ -223,35 +227,31 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
                 />
               </Pressable>
             </View>
-            <Pressable
-              onPress={() =>
-                recipe.ingredientLines.forEach((item) =>
-                  handleAddItem(item, 'default', 1, recipe),
-                )
-              } // Hier Zutaten zur Einkaufsliste hinzufügen
-              style={({ pressed }) => [
-                styles.addToShoppingListBtn,
-                pressed && styles.pressedButton,
-              ]}
-            >
+            <View style={styles.addToShoppingListBtn}>
               <Text style={styles.addToList}>
                 Add all to {'\n'}shopping list
               </Text>
-              <MaterialIcons
-                name="add-shopping-cart"
-                size={25}
-                style={styles.addToShoppingListIcon}
-                color={colors.brightest}
-                onPress={() => console.log(recipe.ingredients)}
-              />
-            </Pressable>
+              <Pressable
+                onPress={
+                  () => () => newRecipe(recipe) // Alle Zutaten zur Einkaufsliste hinzufügen
+                }
+                style={({ pressed }) => [pressed && styles.pressedButton]}
+              >
+                <MaterialIcons
+                  name="add-shopping-cart"
+                  size={25}
+                  style={styles.addToShoppingListIcon}
+                  color={colors.brightest}
+                />
+              </Pressable>
+            </View>
           </View>
 
           <View style={styles.groceryItems}>
             {ingredients.map((item, index) => (
               <View key={index} style={styles.groceryItem}>
                 <Pressable
-                  onPress={() => handlePressIngredient(item.foodCategory)}
+                  onPress={() => handlePressIngredient(item, index)}
                   style={({ pressed }) => [
                     //styles.pressableButton,
                     pressed && styles.pressedButton,
@@ -465,8 +465,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   addToShoppingListBtn: {
+    //flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center',
+    //justifyContent: 'center',
     alignItems: 'center',
   },
   addToShoppingListIcon: {
