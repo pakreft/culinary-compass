@@ -53,7 +53,7 @@ const PlayGroundScreen = () => {
 
   const handleRecipePress = (recipe) => {
     setSelectedRecipe(recipe);
-    console.log();
+    //TODO Open Modal
   };
 
   return (

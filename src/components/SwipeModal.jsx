@@ -22,7 +22,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   const [pan] = useState(new Animated.ValueXY(0, 0));
   const [portions, setPortions] = useState(1);
   const { favorites, addFavorite, removeFavorite } = useFavorites();
-  const { addItem } = useContext(ShoppingListContext); /// Neuer Code von Lennard
+  const { addItem, newRecipe } = useContext(ShoppingListContext); /// Neuer Code von Lennard
   const [ingredients, setIngredients] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -60,8 +60,8 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
     return null; // Wenn recipe null ist, wird die Modalansicht nicht gerendert
   }
 
-  // Filtern und nur die gewünschten Nährstoffe anzeigen (Kalorien, Protein, Kohlenhydrate, Fett)
   const nutritionItems = [
+    // anzeigen der gewünschten Nährstoffe
     { label: 'Calories', total: Math.round(recipe.calories) },
     ...recipe.digest.filter((item) =>
       ['Protein', 'Carbs', 'Fat'].includes(item.label),
@@ -82,25 +82,15 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
     setIsFavorite(!isFavorite);
   };
 
-  //const toggleFavorite = () => setIsFavorite(!isFavorite);
   const favoriteIcon = isFavorite ? 'favorite' : 'favorite-outline';
 
   // Von Lennard: handleAddItem aufrufen und Parameter ausfüllen, um Zutaten zur Einkaufsliste hinzuzufügen
-  const handleAddItem = (
-    name,
-    category,
-    amount,
-    measurement,
-    count,
-    recipe,
-  ) => {
+  const handleAddItem = (name, category, amount, recipe) => {
     const newItem = {
       name: name,
       category: category,
       amount: amount,
       done: false,
-      measurement: measurement,
-      count: count,
       recipe: recipe,
     };
     addItem(newItem);
