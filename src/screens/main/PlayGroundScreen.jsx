@@ -1,11 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  FlatList,
+  StyleSheet,
+  Pressable,
+} from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import RecipeCard from '../../components/RecipeCard'; // Import RecipeCard
+import colors from '../../constants/colors';
 
 const APP_ID = '7d001e38';
 const APP_KEY = 'a7155b5bebc73690b4c7c5f596792ebc';
-const PAGE_SIZE = 10; 
+const PAGE_SIZE = 10;
 
 const PlayGroundScreen = () => {
   const [query, setQuery] = useState('');
@@ -23,14 +33,19 @@ const PlayGroundScreen = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://api.edamam.com/search?q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}&from=${reset ? 0 : from}&to=${reset ? PAGE_SIZE : from + PAGE_SIZE}`
+        `https://api.edamam.com/search?q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}&from=${reset ? 0 : from}&to=${reset ? PAGE_SIZE : from + PAGE_SIZE}`,
       );
-      setRecipes(prevRecipes => reset ? response.data.hits : [...prevRecipes, ...response.data.hits]);
+      setRecipes((prevRecipes) =>
+        reset ? response.data.hits : [...prevRecipes, ...response.data.hits],
+      );
       setFrom(reset ? PAGE_SIZE : from + PAGE_SIZE);
       setError(null);
     } catch (error) {
       setError(error);
-      console.error('Error response:', error.response ? error.response.data : error.message);
+      console.error(
+        'Error response:',
+        error.response ? error.response.data : error.message,
+      );
     } finally {
       setLoading(false);
     }
@@ -42,20 +57,34 @@ const PlayGroundScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Recipe Search</Text>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter recipe name"
-          value={query}
-          onChangeText={setQuery}
-        />
-        <Button title="Search" onPress={() => fetchRecipes(true)} />
+      <View style={styles.searchHeader}>
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Search"
+            value={query}
+            onChangeText={setQuery}
+          />
+          <Pressable title="Search" onPress={() => fetchRecipes(true)} />
+          <View style={styles.searchButton}>
+            <Pressable
+              onPress={() => fetchRecipes(true)}
+              style={({ pressed }) => [pressed && styles.pressedButton]}
+            >
+              <MaterialIcons
+                name={'search'}
+                size={40}
+                color={colors.brightest}
+              />
+            </Pressable>
+          </View>
+        </View>
+        {error && <Text style={styles.error}>Error: {error.message}</Text>}
       </View>
-      {error && <Text style={styles.error}>Error: {error.message}</Text>}
+
       <FlatList
         data={recipes}
-        keyExtractor={(item, index) => `${item.recipe.uri}-${index}`} 
+        keyExtractor={(item, index) => `${item.recipe.uri}-${index}`}
         numColumns={2} // Two Columns for RecipeCard
         renderItem={({ item }) => (
           <RecipeCard recipe={item.recipe} onPress={handleRecipePress} /> //Add Recipe Card
@@ -73,12 +102,23 @@ const PlayGroundScreen = () => {
           <Text style={styles.recipeTitle}>{selectedRecipe.label}</Text>
           <Text>Ingredients:</Text>
           {selectedRecipe.ingredientLines.map((ingredient, index) => (
-            <Text key={index} style={styles.ingredient}>{ingredient}</Text>
+            <Text key={index} style={styles.ingredient}>
+              {ingredient}
+            </Text>
           ))}
           <Text>Calories: {selectedRecipe.calories.toFixed(2)}</Text>
-          <Text>Fat: {selectedRecipe.totalNutrients.FAT.quantity.toFixed(2)} {selectedRecipe.totalNutrients.FAT.unit}</Text>
-          <Text>Protein: {selectedRecipe.totalNutrients.PROCNT.quantity.toFixed(2)} {selectedRecipe.totalNutrients.PROCNT.unit}</Text>
-          <Text>Carbs: {selectedRecipe.totalNutrients.CHOCDF.quantity.toFixed(2)} {selectedRecipe.totalNutrients.CHOCDF.unit}</Text>
+          <Text>
+            Fat: {selectedRecipe.totalNutrients.FAT.quantity.toFixed(2)}{' '}
+            {selectedRecipe.totalNutrients.FAT.unit}
+          </Text>
+          <Text>
+            Protein: {selectedRecipe.totalNutrients.PROCNT.quantity.toFixed(2)}{' '}
+            {selectedRecipe.totalNutrients.PROCNT.unit}
+          </Text>
+          <Text>
+            Carbs: {selectedRecipe.totalNutrients.CHOCDF.quantity.toFixed(2)}{' '}
+            {selectedRecipe.totalNutrients.CHOCDF.unit}
+          </Text>
         </View>
       )}
     </View>
@@ -88,8 +128,8 @@ const PlayGroundScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
+    //padding: 20,
+    backgroundColor: colors.primary,
   },
   title: {
     fontSize: 24,
@@ -97,8 +137,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   searchContainer: {
+    marginTop: 20,
     flexDirection: 'row',
-    marginBottom: 20,
+    marginBottom: 15,
   },
   input: {
     flex: 1,
@@ -106,7 +147,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     marginRight: 10,
-    borderRadius: 5,
+    borderTopRightRadius: 30,
+    borderBottomRightRadius: 30,
+    paddingLeft: 20,
+    backgroundColor: colors.brightest,
+  },
+  searchButton: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    padding: 8,
+    paddingHorizontal: 15,
+    backgroundColor: colors.accent,
+    borderTopLeftRadius: 30,
+    borderBottomLeftRadius: 30,
   },
   recipeDetails: {
     marginTop: 20,

@@ -130,8 +130,8 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
     extrapolate: 'clamp',
   });
 
-  const handlePress = (category) => {
-    console.log(category); // Zeigt die foodCategory in der Konsole an
+  const handlePressIngredient = (category) => {
+    console.log(category); // TODO: Daten an Shopping List uebersenden ????
   };
 
   function roundToMaxOneDecimal(number) {
@@ -187,9 +187,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
                   color={colors.accent}
                   style={styles.durationIcon}
                 />
-                <Text style={styles.time}>
-                  {recipe.totalTime === 0 ? 'n/a' : recipe.totalTime + ' Min.'}
-                </Text>
+                <Text style={styles.time}>{recipe.totalTime + ' Min.'}</Text>
                 <Text style={styles.vegetarian}>
                   {recipe.healthLabels.includes('Vegetarian')
                     ? 'Vegetarian'
@@ -263,7 +261,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
             {ingredients.map((item, index) => (
               <View key={index} style={styles.groceryItem}>
                 <Pressable
-                  onPress={() => handlePress(item.foodCategory)}
+                  onPress={() => handlePressIngredient(item.foodCategory)}
                   style={({ pressed }) => [
                     //styles.pressableButton,
                     pressed && styles.pressedButton,
@@ -291,12 +289,12 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
         </View>
 
         <View style={styles.nutrition}>
-          <Text style={styles.nutritionTitle}>Nutrition</Text>
+          <Text style={styles.nutritionTitle}>Nutrition 1 portion</Text>
           <View style={styles.nutritionItems}>
             {nutritionItems.map((item, index) => (
               <View key={index} style={styles.nutritionItem}>
                 <Text style={styles.nutritionValue}>
-                  {Math.round(item.total)}
+                  {Math.round(item.total / recipe.yield)}
                 </Text>
                 <Text style={styles.nutritionLabel}>{item.label}</Text>
               </View>
@@ -340,7 +338,8 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
           ]}
           onPress={onClose}
         >
-          <Text style={{ color: colors.accent }}>Close</Text>
+          <MaterialIcons name="close" size={28} color={colors.accent} />
+          {/* <Text style={{ color: colors.accent }}>Close</Text> */}
         </Pressable>
       </ScrollView>
       {/* </Animated.View> */}
@@ -546,12 +545,13 @@ const styles = StyleSheet.create({
   quitButton: {
     justifyContent: 'center',
     alignSelf: 'center',
-    marginTop: 40,
+    marginTop: 30,
     borderColor: colors.accent,
     borderWidth: 0.5,
     borderRadius: 50,
     padding: 10,
     backgroundColor: colors.brightest,
+    marginBottom: 30,
   },
   pressedButton: {
     transform: [{ scale: 0.9 }],

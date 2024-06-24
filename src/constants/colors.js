@@ -1,9 +1,9 @@
 // colortheme , used in components/SwipeModal
 import tinycolor from 'tinycolor2';
 
-const accentColor = '#632a1d'; //'firebrick';
+const accentColor = '#653c33'; //'firebrick';
 const primaryColor = tinycolor(accentColor)
-  .lighten(70)
+  .lighten(65)
   .desaturate(40)
   .toString();
 const secondaryColor = tinycolor(accentColor)
@@ -12,9 +12,9 @@ const secondaryColor = tinycolor(accentColor)
   .toString();
 
 export default {
-  accent: accentColor,
-  primary: primaryColor,
-  secondary: secondaryColor,
+  accent: accentColor, //Buttons
+  primary: primaryColor, //Background
+  secondary: secondaryColor, //groceryItems
   iconsGrocery: '#261A20',
   brightest: 'white',
   header: 'silver',

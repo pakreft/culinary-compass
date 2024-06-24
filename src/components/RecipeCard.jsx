@@ -1,6 +1,8 @@
 import React from 'react';
-import { Card, Image, Text } from 'react-native-elements';
-import { TouchableOpacity, StyleSheet, View } from 'react-native'; // Import View
+import { Card, Text } from 'react-native-elements';
+import { TouchableOpacity, StyleSheet, View, Image } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import colors from '../constants/colors';
 
 const RecipeCard = ({ recipe = {}, onPress = () => {} }) => {
   return (
@@ -11,6 +13,18 @@ const RecipeCard = ({ recipe = {}, onPress = () => {} }) => {
       <Card containerStyle={styles.card}>
         <Image source={{ uri: recipe.image }} style={styles.image} />
         <Text style={styles.label}>{recipe.label}</Text>
+
+        <View style={styles.durationInfo}>
+          <MaterialIcons
+            name="timelapse"
+            size={20}
+            color={colors.accent}
+            style={styles.durationIcon}
+          />
+          <Text style={styles.time}>
+            {recipe.totalTime === 0 ? 'n/a' : recipe.totalTime + ' Min.'}
+          </Text>
+        </View>
       </Card>
     </TouchableOpacity>
   );
@@ -18,22 +32,41 @@ const RecipeCard = ({ recipe = {}, onPress = () => {} }) => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    flex: 1, // Set flex ratio to 1 to share available space
-    paddingHorizontal: 5, // Horizontal spacing between cards
-    marginBottom: 10, // Vertical spacing between cards
+    flex: 1,
   },
   card: {
-    borderRadius: 10,
+    borderRadius: 30,
     overflow: 'hidden',
+    //height: 240,
+    padding: 0, // Remove card padding to make the image and other elements fit properly
   },
   image: {
-    height: 150, // Adjusted image height
+    height: 150, // Set a fixed height for the image
+    width: '100%',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
   },
   label: {
-    fontSize: 16, // Adjusted font size
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-    textAlign: 'center', // Center-align text
+    fontSize: 16,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    textAlign: 'center',
+    flex: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  durationInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primary,
+    //borderRadius: 20,
+    padding: 5,
+    marginTop: 10,
+    //marginHorizontal: 10,
+  },
+  time: {
+    marginLeft: 5,
+    color: colors.accent,
   },
 });
 
