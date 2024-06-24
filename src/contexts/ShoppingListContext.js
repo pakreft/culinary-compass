@@ -19,29 +19,28 @@ const initialRecipes = ['Obstsalat', 'Bolognese', 'Chicken Curry', 'Sandwich', '
 
 export const ShoppingListProvider = ({ children }) => {
   const [items, setItems] = useState(initialItems);
-  const [nextId, setNextId] = useState(initialItems.length + 1);
+  //const [nextId, setNextId] = useState(initialItems.length + 1);
   const [categories, setCategories] = useState(initialCategories);
   const [recipes, setRecipes] = useState(initialRecipes);
-
+  
   const addItem = (newItem) => {
-    console.log("funktion started");
-    newItem.id = nextId.toString();
-    console.log("id für das objekt wurde gesetzt");
-    setNextId(nextId.toString());
-    console.log("id wurde inkrementiert");
     setItems((prevItems) => [...prevItems, newItem]);
-    console.log("objekt wurde hinzugefügt");
-
-    if (!categories.includes(newItem.category)) {
-      setCategories((prevCategories) => [...prevCategories, newItem.category]);
-    }
-
-    if (!recipes.includes(newItem.recipe)) {
-      setRecipes((prevRecipes) => [...prevRecipes, newItem.recipe]);
-    }
-    console.log(items.length);
+  
+    setCategories((prevCategories) => {
+      if (!prevCategories.includes(newItem.category)) {
+        return [...prevCategories, newItem.category];
+      }
+      return prevCategories;
+    });
+  
+    setRecipes((prevRecipes) => {
+      if (!prevRecipes.includes(newItem.recipe)) {
+        return [...prevRecipes, newItem.recipe];
+      }
+      return prevRecipes;
+    });
   };
-
+  
   const deleteItem = (itemId) => {
     setItems((prevItems) => {
       const updatedItems = prevItems.filter((item) => item.id !== itemId);
@@ -57,15 +56,32 @@ export const ShoppingListProvider = ({ children }) => {
       if (isLastInRecipe) {
         setRecipes((prevRecipes) => prevRecipes.filter((recipe) => recipe !== itemToDelete.recipe));
       }
-      console.log(updatedItems);
       return updatedItems;
     });
     
   };
 
   const newRecipe = (recipe) => {
-    console.log(recipe);
+    console.log("Adding new recipe: ", recipe.label);
+  
+    recipe.ingredients.forEach((ingredient, index) => {
+      const newItem = {
+        id: `${ingredient.foodId}-${index}-${Date.now()}-${Math.random().toString(16).slice(2)}`, // Eindeutige ID durch Kombination aus foodId und Index
+        name: ingredient.food,
+        category: ingredient.foodCategory || 'Sonstiges', // Default Kategorie, falls keine vorhanden
+        amount: ingredient.weight.toFixed(2),
+        measurement: ingredient.measure || 'g', // Default Maßeinheit, falls keine vorhanden
+        count: ingredient.quantity,
+        done: false,
+        recipe: recipe.label
+      };
+  
+      addItem(newItem);
+    });
+  
+    console.log("All ingredients from the recipe have been added to the shopping list.");
   };
+  
 
   const toggleItemDone = (itemId) => {
     setItems((prevItems) =>

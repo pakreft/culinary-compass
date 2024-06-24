@@ -84,8 +84,8 @@ const CategoryView = () => {
       }
       data={categorizedItems}
       renderItem={renderCategory}
-      keyExtractor={(item) => item.category}
-    />
+      keyExtractor={(item, index) => `category-${item.category}-${index}`}
+      />
   );
 };
 
@@ -106,13 +106,13 @@ const RecipeView = () => {
               onToggleDone={toggleItemDone}
             />
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
         />
       </View>
     );
   };
 
-  const recipeItems = recipes?.map((recipe) => ({
+  const recipeItems = recipes?.map((recipe, index) => ({
     recipe,
     items: items.filter((item) => item.recipe === recipe),
   })) || [];
@@ -121,7 +121,7 @@ const RecipeView = () => {
     <FlatList
       data={recipeItems}
       renderItem={renderRecipe}
-      keyExtractor={(item) => item.recipe}
+      keyExtractor={(item, index) => `recipe-${item.recipe}-${index}`}
     />
   );
 };
