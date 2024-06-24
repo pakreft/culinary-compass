@@ -1,3 +1,5 @@
+//TODO: load smaller images, see image format
+
 import React from 'react';
 import { Card, Text } from 'react-native-elements';
 import {
