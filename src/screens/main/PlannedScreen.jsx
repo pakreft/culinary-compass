@@ -49,11 +49,10 @@ const PlannedScreen = ({ navigation }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null); // State to hold selected recipe
   const { favorites } = useFavorites();
 
-  const { addItem } = useContext(ShoppingListContext);
+  const { addItem, newRecipe } = useContext(ShoppingListContext);
 
   const handleAddItem = (name, category, amount, recipe) => {
     const newItem = {
-      id: `${recipe}-${name}`, // Generiere eine eindeutige ID
       name: name,
       category: category,
       amount: amount,
@@ -64,6 +63,7 @@ const PlannedScreen = ({ navigation }) => {
   };
 
   const handleAddAllItemsToShoppingList = () => {
+    
     // Hole das Start- und Enddatum der aktuellen Woche
     const startOfCurrentWeek = startOfWeek(selectedDate, { locale: de });
     const endOfCurrentWeek = endOfWeek(selectedDate, { locale: de });
@@ -82,20 +82,13 @@ const PlannedScreen = ({ navigation }) => {
       },
       [],
     );
-
+    
     // Füge die Zutaten der aktuellen Wochenrezepte zur Einkaufsliste hinzu
     currentWeekRecipes.forEach((recipe) => {
-      if (recipe.ingredients && Array.isArray(recipe.ingredients)) {
-        recipe.ingredients.forEach((ingredient) => {
-          handleAddItem(
-            ingredient.food,
-            ingredient.foodCategory,
-            ingredient.quantity,
-            recipe.label,
-          );
-        });
-      }
+      newRecipe(recipe);  
     });
+    
+
   };
 
   useEffect(() => {
