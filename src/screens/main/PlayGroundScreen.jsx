@@ -53,6 +53,7 @@ const PlayGroundScreen = () => {
 
   const handleRecipePress = (recipe) => {
     setSelectedRecipe(recipe);
+    console.log();
   };
 
   return (
@@ -66,10 +67,14 @@ const PlayGroundScreen = () => {
             onChangeText={setQuery}
           />
           <Pressable title="Search" onPress={() => fetchRecipes(true)} />
-          <View style={styles.searchButton}>
+          <View>
             <Pressable
               onPress={() => fetchRecipes(true)}
-              style={({ pressed }) => [pressed && styles.pressedButton]}
+              style={({ pressed }) => [
+                ,
+                styles.searchButton,
+                pressed && styles.pressedButton,
+              ]}
             >
               <MaterialIcons
                 name={'search'}
@@ -97,7 +102,7 @@ const PlayGroundScreen = () => {
         onEndReachedThreshold={0.5}
         ListFooterComponent={loading ? <Text>Loading...</Text> : null}
       />
-      {selectedRecipe && (
+      {/* {selectedRecipe && (
         <View style={styles.recipeDetails}>
           <Text style={styles.recipeTitle}>{selectedRecipe.label}</Text>
           <Text>Ingredients:</Text>
@@ -120,7 +125,7 @@ const PlayGroundScreen = () => {
             {selectedRecipe.totalNutrients.CHOCDF.unit}
           </Text>
         </View>
-      )}
+      )} */}
     </View>
   );
 };
@@ -178,6 +183,9 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 16,
     marginBottom: 20,
+  },
+  pressedButton: {
+    transform: [{ scale: 0.9 }],
   },
 });
 

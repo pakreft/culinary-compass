@@ -1,14 +1,24 @@
 import React from 'react';
 import { Card, Text } from 'react-native-elements';
-import { TouchableOpacity, StyleSheet, View, Image } from 'react-native';
+import {
+  TouchableOpacity,
+  StyleSheet,
+  View,
+  Image,
+  Pressable,
+} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../constants/colors';
 
-const RecipeCard = ({ recipe = {}, onPress = () => {} }) => {
+const RecipeCard = ({ recipe, onPress }) => {
+  //({ recipe = {}, onPress = () => {}  })  }) => {
   return (
-    <TouchableOpacity
-      onPress={() => onPress(recipe)}
-      style={styles.cardContainer}
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.cardContainer,
+        pressed && styles.pressedButton,
+      ]}
     >
       <Card containerStyle={styles.card}>
         <Image source={{ uri: recipe.image }} style={styles.image} />
@@ -26,7 +36,7 @@ const RecipeCard = ({ recipe = {}, onPress = () => {} }) => {
           </Text>
         </View>
       </Card>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -37,7 +47,6 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 30,
     overflow: 'hidden',
-    //height: 240,
     padding: 0, // Remove card padding to make the image and other elements fit properly
   },
   image: {
@@ -59,14 +68,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.primary,
-    //borderRadius: 20,
+
     padding: 5,
-    marginTop: 10,
-    //marginHorizontal: 10,
   },
   time: {
     marginLeft: 5,
     color: colors.accent,
+  },
+  pressedButton: {
+    transform: [{ scale: 0.95 }],
   },
 });
 
