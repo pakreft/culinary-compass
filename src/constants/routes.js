@@ -1,6 +1,7 @@
 export const routes = {
   // Main Screens
   searchStack: 'SearchStack',
+  searchTopTabs: 'SearchTopTabs',
   searchScreen: 'SearchScreen',
   favoritesStack: 'FavoritesStack',
   favoritesScreen: 'FavoritesScreen',
@@ -13,4 +14,5 @@ export const routes = {
 
   // Other Screens
   addRecipeScreen: 'AddRecipeScreen',
+  filterScreen: 'FilterScreen',
 };
