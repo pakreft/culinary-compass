@@ -22,11 +22,11 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   const [pan] = useState(new Animated.ValueXY(0, 0));
   const [portions, setPortions] = useState(1);
   const { favorites, addFavorite, removeFavorite } = useFavorites();
-  const { addItem, newRecipe } = useContext(ShoppingListContext); /// Neuer Code von Lennard
+  const { addNewItem, newRecipe } = useContext(ShoppingListContext); /// Neuer Code von Lennard
   const [ingredients, setIngredients] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const { height } = Dimensions.get('window');
+  //const { height } = Dimensions.get('window'); doesnt work smoothly
 
   useEffect(() => {
     if (recipe) {
@@ -58,6 +58,11 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
     updateIngredients(newPortions);
   };
 
+  const decrementPortions = () => {
+    const newPortions = portions > 1 ? portions - 1 : 1;
+    setPortions(newPortions);
+    updateIngredients(newPortions);
+  };
   if (!recipe) {
     return null; // Wenn recipe null ist, wird die Modalansicht nicht gerendert
   }
@@ -70,11 +75,6 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
     ),
   ];
 
-  const decrementPortions = () => {
-    const newPortions = portions > 1 ? portions - 1 : 1;
-    setPortions(newPortions);
-    updateIngredients(newPortions);
-  };
   const toggleFavorite = () => {
     if (isFavorite) {
       removeFavorite(recipe);
@@ -86,46 +86,33 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
 
   const favoriteIcon = isFavorite ? 'favorite' : 'favorite-outline';
 
-  // Von Lennard: handleAddItem aufrufen und Parameter ausfüllen, um Zutaten zur Einkaufsliste hinzuzufügen
-  const handleAddItem = (name, category, amount, recipe) => {
-    const newItem = {
-      name: name,
-      category: category,
-      amount: amount,
-      done: false,
-      recipe: recipe,
-    };
-    addItem(newItem);
-  };
+  // const panResponder = PanResponder.create({
+  //   onStartShouldSetPanResponder: () => true,
+  //   onPanResponderMove: Animated.event([null, { dy: pan.y }], {
+  //     useNativeDriver: false,
+  //   }),
+  //   onPanResponderRelease: (e, gestureState) => {
+  //     if (gestureState.dy > height / 3) {
+  //       onClose();
+  //       pan.setValue({ x: 0, y: 0 });
+  //     } else {
+  //       Animated.spring(pan, {
+  //         toValue: { x: 0, y: 0 },
+  //         useNativeDriver: false,
+  //       }).start();
+  //     }
+  //   },
+  // });
 
-  const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onPanResponderMove: Animated.event([null, { dy: pan.y }], {
-      useNativeDriver: false,
-    }),
-    onPanResponderRelease: (e, gestureState) => {
-      if (gestureState.dy > height / 3) {
-        onClose();
-        pan.setValue({ x: 0, y: 0 });
-      } else {
-        Animated.spring(pan, {
-          toValue: { x: 0, y: 0 },
-          useNativeDriver: false,
-        }).start();
-      }
-    },
-  });
+  // const opacity = pan.y.interpolate({
+  //   inputRange: [0, height / 3],
+  //   outputRange: [1, 0.2],
+  //   extrapolate: 'clamp',
+  // });
 
-  const opacity = pan.y.interpolate({
-    inputRange: [0, height / 3],
-    outputRange: [1, 0.2],
-    extrapolate: 'clamp',
-  });
-
+  //diese Zutat an Shopping List uebersenden
   const handlePressIngredient = (ingredient, index) => {
-    console.log(recipe.label);
-    // TODO: diese Zutat an Shopping List uebersenden
-    //addItem(ingredient, index);
+    addNewItem(ingredient, index);
   };
 
   function roundToMaxOneDecimal(number) {
@@ -233,7 +220,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
               </Text>
               <Pressable
                 onPress={
-                  () => () => newRecipe(recipe) // Alle Zutaten zur Einkaufsliste hinzufügen
+                  () => newRecipe(recipe) // Alle Zutaten zur Einkaufsliste hinzufügen
                 }
                 style={({ pressed }) => [pressed && styles.pressedButton]}
               >
