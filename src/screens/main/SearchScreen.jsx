@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { getRecipes } from '../../api/edamam';
 import SwipeModal from '../../components/SwipeModal';
-import DefaultSearchBar from '../../components/DefaultSearchBar/DefaultSearchBar';
+import DefaultSearchBar from '../../components/DefaultSearchBar';
 import SearchRecipesButton from '../../components/SearchRecipesButton';
 
 export default function SearchScreen() {
