@@ -11,6 +11,7 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import RecipeCard from '../../components/RecipeCard'; // Import RecipeCard
+import SwipeModal from '../../components/SwipeModal';
 import colors from '../../constants/colors';
 
 const APP_ID = '7d001e38';
@@ -24,6 +25,7 @@ const PlayGroundScreen = () => {
   const [error, setError] = useState(null);
   const [from, setFrom] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const fetchRecipes = async (reset = false) => {
     if (reset) {
@@ -49,6 +51,16 @@ const PlayGroundScreen = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const openRecipeModal = (recipe) => {
+    setSelectedRecipe(recipe);
+    setModalVisible(true);
+  };
+
+  const closeRecipeModal = () => {
+    setSelectedRecipe(null);
+    setModalVisible(false);
   };
 
   const handleRecipePress = (recipe) => {
@@ -92,7 +104,10 @@ const PlayGroundScreen = () => {
         keyExtractor={(item, index) => `${item.recipe.uri}-${index}`}
         numColumns={2} // Two Columns for RecipeCard
         renderItem={({ item }) => (
-          <RecipeCard recipe={item.recipe} onPress={handleRecipePress} /> //Add Recipe Card
+          <RecipeCard
+            recipe={item.recipe}
+            onPress={() => openRecipeModal(item.recipe)}
+          /> //Open Recipe Card
         )}
         onEndReached={() => {
           if (!loading) {
@@ -102,6 +117,13 @@ const PlayGroundScreen = () => {
         onEndReachedThreshold={0.5}
         ListFooterComponent={loading ? <Text>Loading...</Text> : null}
       />
+
+      <SwipeModal
+        visible={modalVisible}
+        onClose={closeRecipeModal}
+        recipe={selectedRecipe}
+      />
+
       {/* {selectedRecipe && (
         <View style={styles.recipeDetails}>
           <Text style={styles.recipeTitle}>{selectedRecipe.label}</Text>
