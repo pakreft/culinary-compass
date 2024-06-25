@@ -77,8 +77,10 @@ const PlayGroundScreen = () => {
             placeholder="Search"
             value={query}
             onChangeText={setQuery}
+            returnKeyType="search"
+            onSubmitEditing={() => fetchRecipes(true)}
           />
-          <Pressable title="Search" onPress={() => fetchRecipes(true)} />
+          {/* <Pressable title="Search" onPress={() => fetchRecipes(true)} /> */}
           <View>
             <Pressable
               onPress={() => fetchRecipes(true)}

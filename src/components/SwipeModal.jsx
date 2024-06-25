@@ -1,5 +1,3 @@
-//TODO: Nutrition groesse anpassen
-//TODO: einzelne Items an die Shopping List senden Zeile 128
 import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
@@ -239,10 +237,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
               <View key={index} style={styles.groceryItem}>
                 <Pressable
                   onPress={() => handlePressIngredient(item, index)}
-                  style={({ pressed }) => [
-                    //styles.pressableButton,
-                    pressed && styles.pressedButton,
-                  ]}
+                  style={({ pressed }) => [pressed && styles.pressedButton]}
                 >
                   <Text style={styles.groceriesText}>
                     {item.quantity === 0
@@ -325,11 +320,11 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  // modalContainer: {
+  //   flex: 1,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  // },
   container: {
     flexGrow: 1,
     //justifyContent: 'center',
@@ -342,29 +337,23 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    //justifyContent: 'center',
-    //alignItems: 'center',
     zIndex: -1,
   },
   backgroundImage: {
-    //alignSelf: 'center',
     width: '100%',
     height: '100%',
-    //width: 100,
-    borderBottomLeftRadius: 120, // Radius für die untere linke Ecke
+    borderBottomLeftRadius: 120,
     borderBottomRightRadius: 120,
   },
   imageOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Optional: To add a dark overlay for better text readability
-    borderBottomLeftRadius: 100, // Radius für die untere linke Ecke
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderBottomLeftRadius: 100,
     borderBottomRightRadius: 100,
   },
   header: {
     height: 220,
     paddingTop: 20,
-    //marginBottom: 20,
-    //position: 'relative',
   },
   headerInfo: {
     flexDirection: 'row-reverse',
@@ -385,7 +374,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
   },
   durationIcon: {
-    //bottom: 10,
     marginRight: 10,
   },
   time: {
@@ -394,10 +382,6 @@ const styles = StyleSheet.create({
   },
   vegetarian: {
     fontSize: 16,
-  },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
   },
   favoriteInfo: {
     padding: 8,
@@ -416,10 +400,8 @@ const styles = StyleSheet.create({
   },
 
   ingredientsAction: {
-    //paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    //alignItems: 'center',
     marginBottom: 20,
   },
   portionsText: {
@@ -434,33 +416,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginHorizontal: 10,
   },
-  groceriesHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  groceriesTitle: {
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  groceriesText: {
-    color: 'black',
-    textAlign: 'center',
-  },
   addToList: {
     color: colors.accent,
     textAlign: 'right',
     marginRight: 10,
   },
   addToShoppingListBtn: {
-    //flex: 1,
     flexDirection: 'row',
-    //justifyContent: 'center',
     alignItems: 'center',
   },
   addToShoppingListIcon: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
     padding: 7,
     borderRadius: 10,
     backgroundColor: colors.accent,
@@ -476,8 +441,9 @@ const styles = StyleSheet.create({
     margin: 3,
     backgroundColor: colors.secondary,
   },
-  groceryText: {
-    marginTop: 5,
+  groceriesText: {
+    color: 'black',
+    textAlign: 'center',
   },
   nutrition: {
     padding: 20,
@@ -490,19 +456,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginHorizontal: 20,
+    marginHorizontal: 10,
   },
   nutritionItem: {
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.brightest,
-    padding: 15,
+    padding: 10,
     borderRadius: 30,
-  },
-  nutritionValue: {
-    fontSize: 18,
+    width: 80,
+    height: 80,
   },
   nutritionLabel: {
     fontSize: 14,
+  },
+  nutritionValue: {
+    fontSize: 24,
   },
   pressableButton: {
     flexDirection: 'row',

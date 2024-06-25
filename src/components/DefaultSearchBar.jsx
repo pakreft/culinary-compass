@@ -18,6 +18,8 @@ export default function DefaultSearchBar({
       inputStyle={styles.input}
       leftIconContainerStyle={styles.leftIconContainer}
       rightIconContainerStyle={styles.rightIconContainer}
+      returnKeyType="search" //search sign in keyboard
+      //onSubmitEditing={() => ()} //action when submit searchsign on keyboard
     />
   );
 }
