@@ -23,6 +23,7 @@ import {
   getISOWeek,
   endOfWeek,
 } from 'date-fns';
+import colors from '../../constants/colors';
 import { de } from 'date-fns/locale';
 import { useFavorites } from '../../contexts/FavoritesContext';
 import SwipeModal from '../../components/SwipeModal';
@@ -63,7 +64,6 @@ const PlannedScreen = ({ navigation }) => {
   };
 
   const handleAddAllItemsToShoppingList = () => {
-    
     // Hole das Start- und Enddatum der aktuellen Woche
     const startOfCurrentWeek = startOfWeek(selectedDate, { locale: de });
     const endOfCurrentWeek = endOfWeek(selectedDate, { locale: de });
@@ -82,13 +82,11 @@ const PlannedScreen = ({ navigation }) => {
       },
       [],
     );
-    
+
     // Füge die Zutaten der aktuellen Wochenrezepte zur Einkaufsliste hinzu
     currentWeekRecipes.forEach((recipe) => {
-      newRecipe(recipe);  
+      newRecipe(recipe);
     });
-    
-
   };
 
   useEffect(() => {
@@ -214,23 +212,28 @@ const PlannedScreen = ({ navigation }) => {
       />
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <Text style={styles.headerText}>Planned Recipes</Text>
-          <TouchableOpacity
-            style={styles.alertButton}
-            onPress={handleAddAllItemsToShoppingList}
-          >
-            <Ionicons name="cart-outline" size={40} color="purple" />
-          </TouchableOpacity>
+          <Text style={styles.headerText}></Text>
         </View>
         <View style={styles.weekNavigation}>
           <TouchableOpacity onPress={handlePrevWeek}>
-            <Ionicons name="chevron-back" size={24} color="purple" />
+            <Ionicons name="chevron-back" size={24} color={colors.accent} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setCalendarVisible(true)}>
             <Text style={styles.weekText}>{`Week ${currentWeek}`}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleNextWeek}>
-            <Ionicons name="chevron-forward" size={24} color="purple" />
+            <Ionicons name="chevron-forward" size={24} color={colors.accent} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            //style={styles.alertButton}
+            onPress={handleAddAllItemsToShoppingList}
+          >
+            <Ionicons
+              name="cart-outline"
+              size={40}
+              color={colors.iconsGrocery}
+            />
           </TouchableOpacity>
         </View>
         <Text style={styles.dateRange}>{dateRange}</Text>
@@ -257,7 +260,7 @@ const PlannedScreen = ({ navigation }) => {
                   style={styles.deleteButton}
                   onPress={() => removeRecipe(day.formattedDate, recipeIndex)}
                 >
-                  <Ionicons name="close" size={24} color="purple" />
+                  <Ionicons name="close" size={24} color={colors.accent} />
                 </TouchableOpacity>
               </View>
             ))}
@@ -288,7 +291,7 @@ const PlannedScreen = ({ navigation }) => {
           markedDates={{
             [format(selectedDate, 'yyyy-MM-dd')]: {
               selected: true,
-              selectedColor: 'purple',
+              selectedColor: colors.accent,
             },
           }}
         />
@@ -351,7 +354,7 @@ const PlannedScreen = ({ navigation }) => {
               ListEmptyComponent={
                 loading ? (
                   <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="purple" />
+                    <ActivityIndicator size="large" color={colors.accent} />
                     <Text style={styles.loadingText}>Loading...</Text>
                   </View>
                 ) : (
@@ -409,25 +412,30 @@ const PlannedScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.primary,
   },
-  header: {
+  // header: {
+  //   //paddingHorizontal: 0,
+  //   //paddingTop: 16,
+  //   //paddingBottom: 8,
+  //   backgroundColor: colors.primary,
+  // },
+  // headerTop: {
+  //   flexDirection: 'row',
+  //   justifyContent: 'space-between',
+  //   alignItems: 'center',
+  // },
+  // headerText: {
+  //   fontSize: 24,
+  //   fontWeight: 'bold',
+  //   color: colors.primary,
+  // },
+  cartButton: {
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 8,
-    backgroundColor: 'white',
-  },
-  headerTop: {
-    flexDirection: 'row',
+    color: colors.accent,
     justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'purple',
-  },
-  alertButton: {
-    padding: 8,
   },
   weekNavigation: {
     flexDirection: 'row',
@@ -437,7 +445,7 @@ const styles = StyleSheet.create({
   },
   weekText: {
     fontSize: 18,
-    color: 'purple',
+    color: colors.accent,
     marginHorizontal: 8,
   },
   dateRange: {
@@ -454,7 +462,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: 'purple',
+    color: colors.accent,
   },
   recipeContainer: {
     flexDirection: 'row',
@@ -482,7 +490,7 @@ const styles = StyleSheet.create({
   },
   recipeLabel: {
     fontSize: 16,
-    color: 'purple',
+    color: colors.accent,
   },
   deleteButton: {
     padding: 8,
@@ -491,9 +499,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
-    backgroundColor: 'purple',
-    borderRadius: 4,
+    paddingVertical: 1,
+    backgroundColor: colors.accent,
+    borderRadius: 10,
     marginTop: 8,
   },
   addRecipeButtonText: {
@@ -513,28 +521,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'flex-start', // Ändert die Ausrichtung nach oben
   },
-  // modalContainer: {
-  //   flex: 1,
-  //   //width: '90%',
-  //   justifyContent: 'center',
-  //   transparent: 'true',
-  //   //justifyContent: 'flex-end', // Anpassung, um Modal von unten nach oben zu schieben
-  // },
 
-  // modalContent: {
-  //   backgroundColor: 'lightgrey',
-  //   padding: 20,
-  //   borderRadius: 10,
-  //   width: '90%',
-  //   height: '80%', // Fixierte Höhe
-  //   alignSelf: 'center',
-  //   justifyContent: 'flex-start', // Ändert die Ausrichtung nach oben
-  // },
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: 'purple',
+    color: colors.header,
   },
   searchContainer: {
     flexDirection: 'row',
@@ -556,9 +548,10 @@ const styles = StyleSheet.create({
   closeButton: {
     marginTop: 10,
     alignItems: 'center',
+    color: colors.iconsGrocery,
   },
   closeButtonText: {
-    color: 'purple',
+    color: colors.iconsGrocery,
     fontSize: 16,
   },
   loadingContainer: {
@@ -570,7 +563,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: 'purple',
+    color: colors.brightest,
   },
 });
 

@@ -318,7 +318,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
     </Modal>
   );
 };
-
+//SwipeModalStyles
 const styles = StyleSheet.create({
   // modalContainer: {
   //   flex: 1,
