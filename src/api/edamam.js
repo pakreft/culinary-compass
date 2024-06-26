@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const APP_ID = '6b1aefc7';
-const APP_KEY = '69f1c1d39d653ed6acc765ffe0e8adb2';
-const BASE_URL = 'https://api.edamam.com/search';
+const APP_ID = process.env.EXPO_PUBLIC_API_ID;
+const APP_KEY = process.env.EXPO_PUBLIC_API_KEY;
+const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 
 export const getRecipes = async (query) => {
   try {
