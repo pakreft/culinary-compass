@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const APP_ID = process.env.EXPO_PUBLIC_API_ID;
-const APP_KEY = process.env.EXPO_PUBLIC_API_KEY;
+const APP_ID = process.env.EXPO_PUBLIC_APP_ID;
+const APP_KEY = process.env.EXPO_PUBLIC_APP_KEY;
 const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 const BASE_URL_V2 = process.env.EXPO_PUBLIC_BASE_URL_V2;
 
@@ -23,9 +23,9 @@ export const getRecipes = async () => {
 
 /**
  *
- * @param {Object} params See {@link https://developer.edamam.com/edamam-docs-recipe-api documentation }
+ * @param {Object} params See 'Recipe Search' {@link https://developer.edamam.com/edamam-docs-recipe-api documentation }
  * for how it's structured. Params 'type', 'app_id', 'app_key' can't be changed.
- * @returns {Object} See {@link https://developer.edamam.com/edamam-docs-recipe-api documentation }
+ * @returns {Object} See 'Respone' {@link https://developer.edamam.com/edamam-docs-recipe-api documentation }
  * for how it's structured.
  */
 export async function fetchRecipes(params) {
