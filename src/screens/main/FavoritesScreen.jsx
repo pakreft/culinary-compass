@@ -3,15 +3,24 @@ import { View, FlatList, StyleSheet } from 'react-native';
 import RecipeCard from '../../components/RecipeCard';
 import { useFavorites } from '../../contexts/FavoritesContext';
 import SwipeModal from '../../components/SwipeModal';
+import MainButton from '../../components/MainButton';
+import { fetchRecipes } from '../../api/edamam';
 
 const FavoritesScreen = () => {
-  const { favorites } = useFavorites();
+  const { favorites, addFavorite } = useFavorites();
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
 
   const openModal = (recipe) => {
     setSelectedRecipe(recipe);
     setModalVisible(true);
+  };
+
+  const addToFavs = () => {
+    fetchRecipes({ q: 'chicken' }).then((res) => {
+      const recipe = res.hits[0].recipe;
+      addFavorite(recipe);
+    });
   };
 
   const closeModal = () => {
@@ -21,6 +30,7 @@ const FavoritesScreen = () => {
 
   return (
     <View style={styles.container}>
+      <MainButton onPress={addToFavs} />
       <FlatList
         data={favorites}
         numColumns={2}
