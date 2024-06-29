@@ -11,7 +11,7 @@ import {
 import { getRecipes } from '../../api/edamam';
 import SwipeModal from '../../components/SwipeModal';
 import DefaultSearchBar from '../../components/DefaultSearchBar';
-import SearchRecipesButton from '../../components/SearchRecipesButton';
+import MainButton from '../../components/MainButton';
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
@@ -50,7 +50,7 @@ export default function SearchScreen() {
       </View>
       <View style={styles.listContainer}></View>
       <View style={styles.buttonContainer}>
-        <SearchRecipesButton />
+        <MainButton />
       </View>
     </View>
     /**
