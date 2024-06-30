@@ -19,6 +19,7 @@ export default function MainButton({
       containerStyle={styles.container}
       buttonStyle={styles.button}
       titleStyle={styles.title}
+      disabledStyle={styles.disabled}
     />
   );
 }
@@ -29,4 +30,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
   },
   title: {},
+  disabled: {},
 });

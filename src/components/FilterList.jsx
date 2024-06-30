@@ -1,27 +1,39 @@
+import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, SectionList } from 'react-native';
-import ToggleChip from './ToggleChip';
 
-const SectionHeader = ({ section: { title } }) => (
-  <Text style={styles.sectionHeader}>{title}</Text>
-);
+export default function FilterList({ filters, renderItem }) {
+  const [sections, setSections] = useState([]);
 
-const FiltersContainer = ({ item: filters }) => {
-  return (
-    <View style={styles.filtersContainer}>
-      {filters.map((filter) => (
-        <ToggleChip title={filter} />
-      ))}
-    </View>
-  );
-};
+  useEffect(() => setSections(convertToSectionListData(filters)), [filters]);
 
-export default function FilterList({ data }) {
+  function convertToSectionListData(filters) {
+    const result = [];
+
+    for (const key in filters) {
+      const section = {
+        title: key,
+        data: [filters[key]], // Put the array into another array, otherwise chips stack vertical
+      };
+      result.push(section);
+    }
+
+    return result;
+  }
+
   return (
     <SectionList
-      sections={data}
-      renderSectionHeader={SectionHeader}
-      renderItem={FiltersContainer}
+      sections={sections}
       stickySectionHeadersEnabled={false}
+      renderSectionHeader={({ section }) => (
+        <Text style={styles.sectionHeader}>{section.title}</Text>
+      )}
+      renderItem={({ section }) => (
+        <View style={styles.filtersContainer}>
+          {section.data[0].map((key) =>
+            renderItem({ categorie: section.title, filterKey: key }),
+          )}
+        </View>
+      )}
     />
   );
 }

@@ -2,26 +2,24 @@ import { StyleSheet } from 'react-native';
 import { Chip } from '@rneui/base';
 import { useState } from 'react';
 
-export default function ToggleChip({
+export default function FilterChip({
   title,
-  startSelected = false,
-  disabled = false,
-  onPress = (selected) => {},
+  categorie,
+  filterKey,
+  onPress = ({ categorie, filterKey, selected }) => {},
 }) {
-  const [selected, setSelected] = useState(startSelected);
+  const [selected, setSelected] = useState(false);
 
-  function handlePress() {
-    setSelected((selected) => {
-      onPress(selected);
-      return !selected;
-    });
+  function handleOnPress() {
+    const newSelected = !selected;
+    setSelected(newSelected);
+    onPress({ categorie, filterKey, selected: newSelected });
   }
 
   return (
     <Chip
       title={title}
-      onPress={handlePress}
-      disabled={disabled}
+      onPress={handleOnPress}
       radius={20}
       containerStyle={styles.container}
       buttonStyle={selected ? styles.selectedButton : styles.unselectedButton}
