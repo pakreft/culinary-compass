@@ -37,9 +37,8 @@ const styles = StyleSheet.create({
 
   // Tab Bar
   tabBar: {
+    padding: 5,
     //backgroundColor: 'green',
-    //padding: 5,
-    backgroundColor: 'transparent',
   },
 
   // Tabs
@@ -58,6 +57,7 @@ const styles = StyleSheet.create({
     //backgroundColor: 'yellow',
   },
   indicator: {
+    width: 120,
     height: 5,
     borderRadius: 20,
   },
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
 });
 
 const screenOptions = {
-  //tabBarActiveTintColor: 'red',
+  tabBarActiveTintColor: 'blue',
 
   // Container for the whole tab bar
   tabBarStyle: styles.tabBar,

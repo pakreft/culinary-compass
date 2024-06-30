@@ -15,4 +15,5 @@ export const routes = {
   // Other Screens
   addRecipeScreen: 'AddRecipeScreen',
   filterScreen: 'FilterScreen',
+  recipeViewScreen: 'recipeViewScreen',
 };
