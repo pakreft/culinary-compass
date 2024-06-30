@@ -19,7 +19,7 @@ const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL_V2;
  */
 export async function fetchRecipes(params, logURL = false) {
   const constantParams = {
-    type: 'publi',
+    type: 'public',
     app_id: APP_ID,
     app_key: APP_KEY,
     field: [],
