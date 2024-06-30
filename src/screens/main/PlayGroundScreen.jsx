@@ -14,8 +14,8 @@ import RecipeCard from '../../components/RecipeCard'; // Import RecipeCard
 import SwipeModal from '../../components/SwipeModal';
 import colors from '../../constants/colors';
 
-const APP_ID = '7d001e38';
-const APP_KEY = 'a7155b5bebc73690b4c7c5f596792ebc';
+const APP_ID = process.env.EXPO_PUBLIC_APP_ID;
+const APP_KEY = process.env.EXPO_PUBLIC_APP_KEY;
 const PAGE_SIZE = 10;
 
 const PlayGroundScreen = () => {
