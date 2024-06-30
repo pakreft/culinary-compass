@@ -12,6 +12,7 @@ import {
   Image,
   Keyboard,
   ActivityIndicator,
+  Pressable,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Calendar } from 'react-native-calendars';
@@ -30,9 +31,10 @@ import SwipeModal from '../../components/SwipeModal';
 import ShoppingListContext from '../../contexts/ShoppingListContext';
 import axios from 'axios';
 import RecipeCard from '../../components/RecipeCard'; // Import RecipeCard
+import { MaterialIcons } from '@expo/vector-icons'; // Import MaterialIcons from Expo
 
-const APP_ID = '7d001e38';
-const APP_KEY = 'a7155b5bebc73690b4c7c5f596792ebc';
+const APP_ID = process.env.EXPO_PUBLIC_APP_ID;
+const APP_KEY = process.env.EXPO_PUBLIC_APP_KEY;
 const PAGE_SIZE = 10;
 
 const PlannedScreen = ({ navigation }) => {
@@ -46,29 +48,18 @@ const PlannedScreen = ({ navigation }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [from, setFrom] = useState(0);
-  //const [favoriteRecipes, setFavoriteRecipes] = useState([]); // State to hold favorite recipes
-  const [selectedRecipe, setSelectedRecipe] = useState(null); // State to hold selected recipe
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
   const { favorites } = useFavorites();
-
   const { addItem, newRecipe } = useContext(ShoppingListContext);
 
-  const handleAddItem = (name, category, amount, recipe) => {
-    const newItem = {
-      name: name,
-      category: category,
-      amount: amount,
-      done: false,
-      recipe: recipe,
-    };
-    addItem(newItem);
-  };
+  useEffect(() => {
+    setSearchResults(favorites);
+  }, [favorites]);
 
   const handleAddAllItemsToShoppingList = () => {
-    // Hole das Start- und Enddatum der aktuellen Woche
     const startOfCurrentWeek = startOfWeek(selectedDate, { locale: de });
     const endOfCurrentWeek = endOfWeek(selectedDate, { locale: de });
 
-    // Filtere die Rezepte der aktuellen Woche
     const currentWeekRecipes = Object.entries(recipes).reduce(
       (acc, [date, dailyRecipes]) => {
         const recipeDate = new Date(date);
@@ -83,32 +74,15 @@ const PlannedScreen = ({ navigation }) => {
       [],
     );
 
-    // Füge die Zutaten der aktuellen Wochenrezepte zur Einkaufsliste hinzu
     currentWeekRecipes.forEach((recipe) => {
       newRecipe(recipe);
     });
   };
 
-  useEffect(() => {
-    // GEÄNDERT: Setze initial die Favoriten als Suchergebnisse
-    setSearchResults(favorites);
-  }, [favorites]);
-
-  // useEffect(() => {
-  //   // Fetch favorite recipes on component mount
-  //   const fetchFavoriteRecipes = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `https://api.edamam.com/search?q=chicken&app_id=${APP_ID}&app_key=${APP_KEY}&health=alcohol-free`,
-  //       );
-  //       setFavoriteRecipes(response.data.hits);
-  //     } catch (error) {
-  //       console.error('Error fetching favorite recipes:', error);
-  //     }
-  //   };
-
-  //   fetchFavoriteRecipes();
-  // }, []);
+  const openRecipeModal = (recipe) => {
+    setSelectedRecipe(recipe);
+    setModalVisible(true);
+  };
 
   const handleNextWeek = () => {
     const newDate = addWeeks(selectedDate, 1);
@@ -134,11 +108,11 @@ const PlannedScreen = ({ navigation }) => {
 
   const startDate = startOfWeek(selectedDate, { locale: de });
   const endDate = endOfWeek(selectedDate, { locale: de });
-  const dateRange = `${format(startDate, 'dd.MM.', { locale: de })} - ${format(
-    endDate,
-    'dd.MM.',
-    { locale: de },
-  )}`;
+  const dateRange = `${format(startDate, 'dd.MM.yy', {
+    locale: de,
+  })} - ${format(endDate, 'dd.MM.yy', {
+    locale: de,
+  })}`;
 
   const days = [];
   for (let i = 0; i < 7; i++) {
@@ -146,7 +120,7 @@ const PlannedScreen = ({ navigation }) => {
     const formattedDate = format(dayDate, 'yyyy-MM-dd');
     const dayName = format(dayDate, 'EEEE', { locale: de });
     days.push({
-      date: `${dayName} - ${format(dayDate, 'dd.MM.')}`,
+      date: `${dayName} - ${format(dayDate, 'dd.MM.yy')}`,
       formattedDate,
       recipes: recipes[formattedDate] || [],
     });
@@ -174,7 +148,6 @@ const PlannedScreen = ({ navigation }) => {
 
   const searchRecipes = async (reset = false) => {
     if (!searchQuery.trim()) {
-      // Zeige Favoriten an, wenn keine Suchanfrage vorhanden ist
       setSearchResults(favorites);
       return;
     }
@@ -198,17 +171,12 @@ const PlannedScreen = ({ navigation }) => {
     }
   };
 
-  const openRecipeModal = (recipe) => {
-    setSelectedRecipe(recipe);
-    setModalVisible(true);
-  };
-
   return (
     <View style={styles.container}>
       <SwipeModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        recipe={selectedRecipe} // Pass the selected recipe to the SwipeModal
+        recipe={selectedRecipe}
       />
       <View style={styles.header}>
         <View style={styles.headerTop}>
@@ -226,14 +194,21 @@ const PlannedScreen = ({ navigation }) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            //style={styles.alertButton}
+            style={styles.addToShoppingListBtn}
             onPress={handleAddAllItemsToShoppingList}
           >
-            <Ionicons
-              name="cart-outline"
-              size={40}
-              color={colors.iconsGrocery}
-            />
+            {/*<Text style={styles.addToList}>Add all to {'\n'}shopping list</Text>*/}
+            <Pressable
+              onPress={handleAddAllItemsToShoppingList}
+              style={({ pressed }) => [pressed && styles.pressedButton]}
+            >
+              <MaterialIcons
+                name="add-shopping-cart"
+                size={25}
+                style={styles.addToShoppingListIcon}
+                color={colors.brightest}
+              />
+            </Pressable>
           </TouchableOpacity>
         </View>
         <Text style={styles.dateRange}>{dateRange}</Text>
@@ -247,15 +222,10 @@ const PlannedScreen = ({ navigation }) => {
                 key={recipe.uri + recipeIndex}
                 style={styles.recipeContainer}
               >
-                <TouchableOpacity onPress={() => openRecipeModal(recipe)}>
-                  <View style={styles.recipeCard}>
-                    <Image
-                      source={{ uri: recipe.image }}
-                      style={styles.recipeImage}
-                    />
-                    <Text style={styles.recipeLabel}>{recipe.label}</Text>
-                  </View>
-                </TouchableOpacity>
+                <RecipeCard
+                  recipe={recipe}
+                  onPress={() => openRecipeModal(recipe)}
+                />
                 <TouchableOpacity
                   style={styles.deleteButton}
                   onPress={() => removeRecipe(day.formattedDate, recipeIndex)}
@@ -284,7 +254,7 @@ const PlannedScreen = ({ navigation }) => {
         visible={calendarVisible}
         animationType="slide"
         onRequestClose={() => setCalendarVisible(false)}
-        transparent={true} // Modal transparent machen, damit die BottomTabBar sichtbar bleibt
+        transparent={true}
       >
         <Calendar
           onDayPress={handleDateSelect}
@@ -328,26 +298,17 @@ const PlannedScreen = ({ navigation }) => {
               />
             </View>
             <FlatList
+              numColumns={2} // Two Columns for RecipeCard
               data={searchResults}
               keyExtractor={(item, index) => {
                 const uniqueKey = item.recipe ? item.recipe.uri : item.uri;
                 return `${uniqueKey}-${index}`;
               }}
               renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.recipeCard}
+                <RecipeCard
+                  recipe={item.recipe || item}
                   onPress={() => addRecipe(currentDate, item.recipe || item)}
-                >
-                  <Image
-                    source={{
-                      uri: item.recipe ? item.recipe.image : item.image,
-                    }}
-                    style={styles.recipeImage}
-                  />
-                  <Text style={styles.recipeLabel}>
-                    {item.recipe ? item.recipe.label : item.label}
-                  </Text>
-                </TouchableOpacity>
+                />
               )}
               onEndReached={() => searchQuery.trim() && searchRecipes()}
               onEndReachedThreshold={0.5}
@@ -358,40 +319,7 @@ const PlannedScreen = ({ navigation }) => {
                     <Text style={styles.loadingText}>Loading...</Text>
                   </View>
                 ) : (
-                  <FlatList
-                    data={searchResults}
-                    keyExtractor={(item, index) => {
-                      const uniqueKey = item.recipe
-                        ? item.recipe.uri
-                        : item.uri;
-                      return `${uniqueKey}-${index}`;
-                    }}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity
-                        style={styles.recipeCard}
-                        onPress={() =>
-                          addRecipe(currentDate, item.recipe || item)
-                        }
-                      >
-                        <Image
-                          source={{
-                            uri: item.recipe ? item.recipe.image : item.image,
-                          }}
-                          style={styles.recipeImage}
-                        />
-                        <Text style={styles.recipeLabel}>
-                          {item.recipe ? item.recipe.label : item.label}
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-                    onEndReached={() => searchQuery.trim() && searchRecipes()} // Ändere die Bedingung
-                    onEndReachedThreshold={0.5}
-                    ListEmptyComponent={
-                      !searchQuery.trim() && favorites.length === 0 ? (
-                        <Text>No favorite recipes found.</Text>
-                      ) : null
-                    }
-                  />
+                  <Text>No favorite recipes found.</Text>
                 )
               }
             />
@@ -414,32 +342,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.primary,
   },
-  // header: {
-  //   //paddingHorizontal: 0,
-  //   //paddingTop: 16,
-  //   //paddingBottom: 8,
-  //   backgroundColor: colors.primary,
-  // },
-  // headerTop: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   alignItems: 'center',
-  // },
-  // headerText: {
-  //   fontSize: 24,
-  //   fontWeight: 'bold',
-  //   color: colors.primary,
-  // },
-  cartButton: {
+  header: {
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 8,
-    color: colors.accent,
-    justifyContent: 'space-between',
+    backgroundColor: colors.primary,
   },
   weekNavigation: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 8,
   },
@@ -450,7 +361,7 @@ const styles = StyleSheet.create({
   },
   dateRange: {
     fontSize: 16,
-    color: 'gray',
+    color: colors.accent,
     textAlign: 'center',
     marginTop: 4,
   },
@@ -470,28 +381,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 8,
   },
-  recipeCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 8,
-    backgroundColor: 'white',
-    borderRadius: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  recipeImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 4,
-    marginRight: 8,
-  },
-  recipeLabel: {
-    fontSize: 16,
-    color: colors.accent,
-  },
   deleteButton: {
     padding: 8,
   },
@@ -499,7 +388,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 1,
+    paddingVertical: 8,
     backgroundColor: colors.accent,
     borderRadius: 10,
     marginTop: 8,
@@ -521,7 +410,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'flex-start', // Ändert die Ausrichtung nach oben
   },
-
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -540,10 +428,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginRight: 10,
     paddingHorizontal: 10,
-  },
-  loadingText: {
-    textAlign: 'center',
-    marginBottom: 10,
   },
   closeButton: {
     marginTop: 10,
@@ -564,6 +448,24 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: colors.brightest,
+  },
+  addToShoppingListBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.accent,
+    padding: 8,
+    borderRadius: 8,
+  },
+  addToList: {
+    color: colors.brightest,
+    marginRight: 10,
+    fontSize: 16,
+  },
+  pressedButton: {
+    backgroundColor: colors.primaryLight,
+  },
+  addToShoppingListIcon: {
+    marginLeft: 'auto',
   },
 });
 

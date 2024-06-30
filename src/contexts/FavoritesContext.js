@@ -13,8 +13,10 @@ export const FavoritesProvider = ({ children }) => {
       if (prevFavorites.some((fav) => fav.label === recipe.label)) {
         return prevFavorites;
       }
+      //console.log('Recipe added to favorites:', recipe);
       return [...prevFavorites, recipe];
     });
+    //console.log('Current favorites:', favorites);
   };
 
   const removeFavorite = (recipe) => {

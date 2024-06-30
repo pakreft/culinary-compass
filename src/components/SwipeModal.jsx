@@ -66,12 +66,21 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   }
 
   const nutritionItems = [
-    // anzeigen der gewünschten Nährstoffe
     { label: 'Calories', total: Math.round(recipe.calories) },
-    ...recipe.digest.filter((item) =>
-      ['Protein', 'Carbs', 'Fat'].includes(item.label),
-    ),
+    ...(recipe.digest
+      ? recipe.digest.filter((item) =>
+          ['Protein', 'Carbs', 'Fat'].includes(item.label),
+        )
+      : []),
   ];
+
+  // const nutritionItems = [
+  //   // anzeigen der gewünschten Nährstoffe
+  //   { label: 'Calories', total: Math.round(recipe.calories) },
+  //   ...recipe.digest.filter((item) =>
+  //     ['Protein', 'Carbs', 'Fat'].includes(item.label),
+  //   ),
+  // ];
 
   const toggleFavorite = () => {
     if (isFavorite) {
