@@ -14,6 +14,7 @@ import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ShoppingListContext from '../../contexts/ShoppingListContext';
 import ShoppingListItem from '../../components/ShoppingListItem';
+import colors from '../../constants/colors';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -185,9 +186,9 @@ const ShoppingListScreen = () => {
           <Ionicons name="add" size={32} color="white" />
         </TouchableOpacity>
       )}
-      <TouchableOpacity style={styles.resetButton} onPress={clearAsyncStorage}>
+      {/* <TouchableOpacity style={styles.resetButton} onPress={clearAsyncStorage}>
         <Text style={styles.resetButtonText}>Reset AsyncStorage</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -249,20 +250,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   categoryContainer: {
-    marginBottom: 20,
+    marginBottom: 0,
     padding: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10,
   },
   categoryTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#800080',
+    color: colors.accent,
   },
   fab: {
     position: 'absolute',
     right: 20,
     bottom: 20,
-    backgroundColor: '#800080',
+    backgroundColor: '#653c33',
     width: 70,
     height: 70,
     borderRadius: 35,
@@ -273,7 +276,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 20,
     bottom: 20,
-    backgroundColor: 'red',
+    backgroundColor: '#8a8a8a',
     padding: 10,
     borderRadius: 5,
   },
@@ -282,7 +285,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   removeAllButton: {
-    backgroundColor: '#800080',
+    backgroundColor: '#653c33',
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
@@ -309,19 +312,19 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#800080',
+    color: '#653c33',
   },
   input: {
     width: '100%',
     borderBottomWidth: 1,
-    borderColor: '#800080',
+    borderColor: '#653c33',
     paddingBottom: 8,
     marginBottom: 20,
   },
   pickerLabel: {
     alignSelf: 'flex-start',
     fontSize: 16,
-    color: '#800080',
+    color: '#653c33',
     marginBottom: 5,
   },
   picker: {
@@ -330,7 +333,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   addButton: {
-    backgroundColor: '#800080',
+    backgroundColor: '#653c33',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',

@@ -11,6 +11,7 @@ const secondaryColor = tinycolor(accentColor)
   .desaturate(65)
   .toString();
 
+
 export default {
   accent: accentColor, //Buttons
   primary: primaryColor, //Background

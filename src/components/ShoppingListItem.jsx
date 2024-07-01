@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import colors from '../constants/colors'; // Import the colors
 
 const ShoppingListItem = ({ item, onToggleDone, onDelete, mode }) => {
   const renderAmount = () => {
@@ -63,21 +64,25 @@ const ShoppingListItem = ({ item, onToggleDone, onDelete, mode }) => {
 const styles = StyleSheet.create({
   itemContainer: {
     padding: 15,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0,
     borderBottomColor: '#ccc',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: colors.accent,
+    borderRadius: 10, // added for rounded corners
+    marginVertical: 5, // added to create spacing between items
   },
   itemContainerDone: {
     backgroundColor: '#f0f0f0',
+    borderRadius: 10, // ensure done items also have rounded corners
   },
   itemInfo: {
     flex: 1,
   },
   itemText: {
     fontSize: 18,
+    color: '#fff'
   },
   itemTextDone: {
     textDecorationLine: 'line-through',
@@ -85,7 +90,7 @@ const styles = StyleSheet.create({
   },
   itemAmount: {
     fontSize: 14,
-    color: '#888',
+    color: '#fff',
   },
   iconContainer: {
     marginLeft: 10,
@@ -113,5 +118,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
 
 export default ShoppingListItem;
