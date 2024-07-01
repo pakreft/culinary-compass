@@ -15,8 +15,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ShoppingListContext from '../../contexts/ShoppingListContext';
 import ShoppingListItem from '../../components/ShoppingListItem';
 import colors from '../../constants/colors';
+import App from '../../App';
 
 const Tab = createMaterialTopTabNavigator();
+
+const APP_ID = process.env.EXPO_PUBLIC_APP_ID;
+const APP_KEY = process.env.EXPO_PUBLIC_APP_KEY;
 
 const ShoppingModeItem = ({ item, onToggleDone }) => (
   <ShoppingListItem item={item} onToggleDone={onToggleDone} mode="shopping" />
@@ -171,6 +175,7 @@ const ShoppingListScreen = () => {
   const [amount, setAmount] = useState('');
 
   const handleAddItem = () => {
+    console.log(APP_ID, APP_KEY);
     addItem({ 
       id: `${name}-${Date.now()}`, // Create a unique ID
       name, 
