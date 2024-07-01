@@ -1,11 +1,12 @@
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import { routes } from '../constants/routes';
 import SearchScreenStack from './SearchScreenStack';
 import FavoritesScreenStack from './FavoritesScreenStack';
 import PlannedScreenStack from './PlannedScreenStack';
 import ShoppingListScreenStack from './ShoppingListScreenStack';
-import PlayGroundScreen from './PlayGroundScreenStack';
 import PlayGroundScreenStack from './PlayGroundScreenStack';
 
 const Tab = createBottomTabNavigator();
@@ -28,7 +29,9 @@ export default function BottomTabBar() {
         component={SearchScreenStack}
         options={{
           tabBarLabel: 'Search',
-          //tabBarIcon:
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="search" color={color} size={size} />
+          ),
         }}
       />
       <Tab.Screen
@@ -36,7 +39,9 @@ export default function BottomTabBar() {
         component={FavoritesScreenStack}
         options={{
           tabBarLabel: 'Favorites',
-          //tabBarIcon:
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="heart" color={color} size={size} />
+          ),
         }}
       />
       <Tab.Screen
@@ -44,7 +49,9 @@ export default function BottomTabBar() {
         component={PlannedScreenStack}
         options={{
           tabBarLabel: 'Planned',
-          //tabBarIcon:
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="calendar" color={color} size={size} />
+          ),
         }}
       />
       <Tab.Screen
@@ -52,6 +59,9 @@ export default function BottomTabBar() {
         component={ShoppingListScreenStack}
         options={{
           tabBarLabel: 'Shopping List',
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="cart" color={color} size={size} />
+          ),
         }}
       />
       <Tab.Screen
@@ -59,7 +69,9 @@ export default function BottomTabBar() {
         component={PlayGroundScreenStack}
         options={{
           tabBarLabel: 'PlayGround',
-          //tabBarIcon:
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="construct" color={color} size={size} />
+          ),
         }}
       />
     </Tab.Navigator>
