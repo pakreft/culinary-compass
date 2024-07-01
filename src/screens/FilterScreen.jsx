@@ -11,7 +11,7 @@ import { routes } from '../constants/routes';
 export default function FilterScreen({ navigation }) {
   const [selectedFilters, setSelectedFilters] = useState({});
   const [fetching, setFetching] = useState(false);
-  const [hits, setHits] = useState([]);
+  const [response, setResponse] = useState({});
 
   function getTotalSelectedFiltersCount() {
     let totalCount = 0;
@@ -69,17 +69,13 @@ export default function FilterScreen({ navigation }) {
 
   function handleOnPressSearchButton() {
     setFetching(true);
-    console.log(selectedFilters);
 
-    fetchRecipes(selectedFilters)
+    fetchRecipes({ ...selectedFilters, ...{ random: 'True' } })
       .then((res) => {
         console.log(res);
-        console.log(res.hits);
-
-        setHits(res.hits);
-        console.log(res.hits);
+        setResponse(res);
         navigation.navigate(routes.recipeViewScreen, {
-          recipes: hits,
+          res: response,
         });
       })
       .catch((err) => {
@@ -136,6 +132,6 @@ const styles = StyleSheet.create({
     //backgroundColor: 'blue',
   },
   buttonContainer: {
-    //backgroundColor: 'green',
+    backgroundColor: 'transparent',
   },
 });
