@@ -44,13 +44,34 @@ const clearAsyncStorage = async () => {
 const CategoryView = () => {
   const { items, categories, deleteItem, toggleItemDone } = useContext(ShoppingListContext);
 
+  const groupItems = (items) => {
+    const groupedItems = {};
+
+    items.forEach((item) => {
+      const key = `${item.name}-${item.measurement}`;
+      if (!groupedItems[key]) {
+        groupedItems[key] = { ...item };
+      } else {
+        if (item.measurement === 'g') {
+          groupedItems[key].amount += item.amount;
+        } else {
+          groupedItems[key].count += item.count;
+        }
+      }
+    });
+
+    return Object.values(groupedItems);
+  };
+
   const renderCategory = ({ item }) => {
-    const sortedItems = item.items.filter(i => !i.done);
+    const filteredItems = item.items.filter(i => !i.done);
+    const groupedItems = groupItems(filteredItems);
+
     return (
       <View style={styles.categoryContainer}>
         <Text style={styles.categoryTitle}>{item.category}</Text>
         <FlatList
-          data={sortedItems}
+          data={groupedItems}
           renderItem={({ item }) => (
             <ShoppingModeItem
               item={item}
@@ -154,7 +175,7 @@ const ShoppingListScreen = () => {
       id: `${name}-${Date.now()}`, // Create a unique ID
       name, 
       category, 
-      amount, 
+      amount: parseFloat(amount), // Convert amount to a number
       measurement: 'g', 
       count: null, 
       done: false, 
@@ -186,9 +207,9 @@ const ShoppingListScreen = () => {
           <Ionicons name="add" size={32} color="white" />
         </TouchableOpacity>
       )}
-      {/* <TouchableOpacity style={styles.resetButton} onPress={clearAsyncStorage}>
+      <TouchableOpacity style={styles.resetButton} onPress={clearAsyncStorage}>
         <Text style={styles.resetButtonText}>Reset AsyncStorage</Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
       <Modal
         animationType="slide"
         transparent={true}
