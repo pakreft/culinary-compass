@@ -245,16 +245,8 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
         </View>
 
         <View style={styles.instructionsButtons}>
-          <Pressable
-            onPress={() =>
-              // if (!isFavorite) {
-              //   addFavorite(recipe);
-              //   console.log('Added to Favorites');
-              // }
-              //navigation.navigate('PlannedStack')
-              console.log('PLAN')
-            }
-            //onPress={() => addFavorite()}
+          {/* <Pressable
+            onPress={() => console.log('PLAN')}
             style={({ pressed }) => [
               styles.pressableButton,
               pressed && styles.pressedButton,
@@ -266,7 +258,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
               color={colors.brightest}
             />
             <Text style={styles.buttonText}>Plan</Text>
-          </Pressable>
+          </Pressable> */}
           <Pressable
             style={({ pressed }) => [
               styles.pressableButton,
