@@ -4,6 +4,7 @@ import { SearchBar } from '@rneui/themed';
 export default function DefaultSearchBar({
   input,
   onChangeText,
+  onSubmitEditing,
   placeholderText = 'Type here',
 }) {
   return (
@@ -19,7 +20,7 @@ export default function DefaultSearchBar({
       leftIconContainerStyle={styles.leftIconContainer}
       rightIconContainerStyle={styles.rightIconContainer}
       returnKeyType="search" //search sign in keyboard
-      //onSubmitEditing={() => ()} //action when submit searchsign on keyboard
+      onSubmitEditing={onSubmitEditing} //action when submit searchsign on keyboard
     />
   );
 }

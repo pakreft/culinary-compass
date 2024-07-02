@@ -60,7 +60,11 @@ export default function SearchScreen({ navigation }) {
     <View style={styles.screenContainer}>
       <View style={styles.inputSearchContainer}>
         <View style={styles.inputContainer}>
-          <DefaultSearchBar input={query} onChangeText={setQuery} />
+          <DefaultSearchBar
+            input={query}
+            onChangeText={setQuery}
+            onSubmitEditing={onSubmitQuery}
+          />
           {error ? (
             <Text style={styles.errorText}>Error... Try again</Text>
           ) : null}
