@@ -4,8 +4,6 @@ import {
   Text,
   Modal,
   StyleSheet,
-  Dimensions,
-  PanResponder,
   Animated,
   Pressable,
   ScrollView,
@@ -76,14 +74,6 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
       : []),
   ];
 
-  // const nutritionItems = [
-  //   // anzeigen der gewünschten Nährstoffe
-  //   { label: 'Calories', total: Math.round(recipe.calories) },
-  //   ...recipe.digest.filter((item) =>
-  //     ['Protein', 'Carbs', 'Fat'].includes(item.label),
-  //   ),
-  // ];
-
   const toggleFavorite = () => {
     if (isFavorite) {
       removeFavorite(recipe);
@@ -94,30 +84,6 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   };
 
   const favoriteIcon = isFavorite ? 'favorite' : 'favorite-outline';
-
-  // const panResponder = PanResponder.create({
-  //   onStartShouldSetPanResponder: () => true,
-  //   onPanResponderMove: Animated.event([null, { dy: pan.y }], {
-  //     useNativeDriver: false,
-  //   }),
-  //   onPanResponderRelease: (e, gestureState) => {
-  //     if (gestureState.dy > height / 3) {
-  //       onClose();
-  //       pan.setValue({ x: 0, y: 0 });
-  //     } else {
-  //       Animated.spring(pan, {
-  //         toValue: { x: 0, y: 0 },
-  //         useNativeDriver: false,
-  //       }).start();
-  //     }
-  //   },
-  // });
-
-  // const opacity = pan.y.interpolate({
-  //   inputRange: [0, height / 3],
-  //   outputRange: [1, 0.2],
-  //   extrapolate: 'clamp',
-  // });
 
   //diese Zutat an Shopping List uebersenden
   const handlePressIngredient = (ingredient, index) => {
@@ -139,13 +105,6 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
       presentationStyle="formSheet"
       visible={visible}
     >
-      {/* <Animated.View
-        {...panResponder.panHandlers}
-        style={[
-          styles.modalContainer,
-          { transform: [{ translateY: pan.y }], opacity },
-        ]}
-      > */}
       <ScrollView style={styles.container}>
         <View style={styles.header}>
           <View style={styles.imageContainer}>
@@ -331,24 +290,15 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
           onPress={onClose}
         >
           <MaterialIcons name="close" size={28} color={colors.accent} />
-          {/* <Text style={{ color: colors.accent }}>Close</Text> */}
         </Pressable>
       </ScrollView>
-      {/* </Animated.View> */}
     </Modal>
   );
 };
-//SwipeModalStyles
+
 const styles = StyleSheet.create({
-  // modalContainer: {
-  //   flex: 1,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  // },
   container: {
     flexGrow: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
     backgroundColor: colors.primary,
   },
   imageContainer: {
@@ -381,6 +331,7 @@ const styles = StyleSheet.create({
   },
   recipeTitle: {
     alignSelf: 'center',
+    textAlign: 'center',
     fontSize: 35,
     fontWeight: 'bold',
     marginBottom: 10,

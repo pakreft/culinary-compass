@@ -6,6 +6,7 @@ export default function MainButton({
   title = 'Button',
   loading = false,
   disabled = false,
+  buttonStyle,
   onPress,
 }) {
   return (
@@ -18,7 +19,7 @@ export default function MainButton({
       radius={20}
       raised={true}
       containerStyle={styles.container}
-      buttonStyle={styles.button}
+      buttonStyle={[styles.button, buttonStyle]}
       titleStyle={styles.title}
       disabledStyle={styles.disabled}
     />

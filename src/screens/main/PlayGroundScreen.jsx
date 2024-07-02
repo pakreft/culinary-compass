@@ -125,31 +125,6 @@ const PlayGroundScreen = () => {
         onClose={closeRecipeModal}
         recipe={selectedRecipe}
       />
-
-      {/* {selectedRecipe && (
-        <View style={styles.recipeDetails}>
-          <Text style={styles.recipeTitle}>{selectedRecipe.label}</Text>
-          <Text>Ingredients:</Text>
-          {selectedRecipe.ingredientLines.map((ingredient, index) => (
-            <Text key={index} style={styles.ingredient}>
-              {ingredient}
-            </Text>
-          ))}
-          <Text>Calories: {selectedRecipe.calories.toFixed(2)}</Text>
-          <Text>
-            Fat: {selectedRecipe.totalNutrients.FAT.quantity.toFixed(2)}{' '}
-            {selectedRecipe.totalNutrients.FAT.unit}
-          </Text>
-          <Text>
-            Protein: {selectedRecipe.totalNutrients.PROCNT.quantity.toFixed(2)}{' '}
-            {selectedRecipe.totalNutrients.PROCNT.unit}
-          </Text>
-          <Text>
-            Carbs: {selectedRecipe.totalNutrients.CHOCDF.quantity.toFixed(2)}{' '}
-            {selectedRecipe.totalNutrients.CHOCDF.unit}
-          </Text>
-        </View>
-      )} */}
     </View>
   );
 };

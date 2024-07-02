@@ -2,13 +2,7 @@
 
 import React from 'react';
 import { Card, Text } from 'react-native-elements';
-import {
-  TouchableOpacity,
-  StyleSheet,
-  View,
-  Image,
-  Pressable,
-} from 'react-native';
+import { StyleSheet, View, Image, Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../constants/colors';
 
@@ -67,7 +61,7 @@ const styles = StyleSheet.create({
     height: 45,
     paddingVertical: 5,
     paddingHorizontal: 10,
-    justifyContent: 'center', // Vertikal zentrieren
+    justifyContent: 'center',
     flex: 0,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },

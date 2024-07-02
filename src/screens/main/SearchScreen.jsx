@@ -1,10 +1,12 @@
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Pressable } from 'react-native';
 import { useState } from 'react';
 
 import DefaultSearchBar from '../../components/DefaultSearchBar';
 import MainButton from '../../components/MainButton';
 import { fetchAnswer, fetchRecipesViaURI } from '../../api/edamam';
 import { routes } from '../../constants/routes';
+import colors from '../../constants/colors';
+import { MaterialIcons } from '@expo/vector-icons';
 
 export default function SearchScreen({ navigation }) {
   const [query, setQuery] = useState('');
@@ -56,20 +58,25 @@ export default function SearchScreen({ navigation }) {
 
   return (
     <View style={styles.screenContainer}>
-      <View style={styles.inputContainer}>
-        <DefaultSearchBar input={query} onChangeText={setQuery} />
-        {error ? (
-          <Text style={styles.errorText}>Error... Try again</Text>
-        ) : null}
+      <View style={styles.inputSearchContainer}>
+        <View style={styles.inputContainer}>
+          <DefaultSearchBar input={query} onChangeText={setQuery} />
+          {error ? (
+            <Text style={styles.errorText}>Error... Try again</Text>
+          ) : null}
+        </View>
+        <View style={styles.buttonContainer}>
+          <MainButton
+            title={'Search'}
+            loading={fetching}
+            onPress={onSubmitQuery}
+            disabled={query.length == 0 ? true : false}
+            buttonStyle={styles.searchButton}
+          />
+        </View>
       </View>
+
       <View style={styles.listContainer}></View>
-      <View style={styles.buttonContainer}>
-        <MainButton
-          loading={fetching}
-          onPress={onSubmitQuery}
-          disabled={query.length == 0 ? true : false}
-        />
-      </View>
     </View>
   );
 }
@@ -77,18 +84,27 @@ export default function SearchScreen({ navigation }) {
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    padding: 8,
+    padding: 15,
   },
   inputContainer: {
     marginBottom: 8,
     //backgroundColor: 'red',
   },
-  listContainer: {
+  inputSearchContainer: {
     flex: 1,
-    //backgroundColor: 'blue',
+    justifyContent: 'center',
+    verticalAlign: 'center',
   },
+  listContainer: {},
   buttonContainer: {
-    //backgroundColor: 'yellow',
+    alignItems: 'center',
+    margin: 10,
+  },
+  searchButton: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    padding: 15,
+    backgroundColor: colors.accent,
   },
   errorText: {
     alignSelf: 'center',
