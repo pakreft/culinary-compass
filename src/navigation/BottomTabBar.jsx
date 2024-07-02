@@ -21,8 +21,8 @@ export default function BottomTabBar() {
       screenOptions={{
         headerShown: false,
         tabBarLabelStyle: {},
-        tabBarStyle: { backgroundColor: colors.accent },
-        tabBarActiveTintColor: 'white',
+        tabBarStyle: { backgroundColor: colors.primary},
+        tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: 'darkgrey',
       }}
     >

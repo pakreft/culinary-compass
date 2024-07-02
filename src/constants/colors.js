@@ -3,7 +3,7 @@ import tinycolor from 'tinycolor2';
 
 const accentColor = '#653c33'; //'firebrick';
 const secondaryAccentColor = '#a55e4e'; // etwas heller
-const thirdaccentcolor = '#c5968b'; // weiche farbe für den hintergrund allgemein
+const thirdaccentcolor = '#b5b5b5'; // weiche farbe für den hintergrund allgemein
 const lightgreen = '#88c312'; // sanftes grün
 const lightred = '#ff4e00';
 

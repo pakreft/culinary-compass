@@ -36,10 +36,10 @@ const styles = StyleSheet.create({
 
   // Buttons
   selectedButton: {
-    backgroundColor: colors.doneButton,
+    backgroundColor: colors.accent,
   },
   unselectedButton: {
-    backgroundColor: colors.accent,
+    backgroundColor: '#b99f99',
   },
   disabledButton: {
     backgroundColor: colors.secondaryAccent,

@@ -14,9 +14,9 @@ export default function PlannedScreenStack() {
       initialRouteName={routes.plannedScreen}
       screenOptions={{
         headerStyle: {
-          backgroundColor: colors.accent, // Set the header background color
+          backgroundColor: colors.background, // Set the header background color
         },
-        headerTintColor: '#fff', // Set the header text color
+        headerTintColor: colors.accent, // Set the header text color
         headerTitleStyle: {
           fontWeight: 'bold', // Set the header title style
         },
