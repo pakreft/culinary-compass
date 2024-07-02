@@ -7,7 +7,7 @@ import {
   Modal,
   TextInput,
   FlatList,
-  Keyboard, // Add this import
+  Keyboard,
   ActivityIndicator,
   Pressable,
 } from 'react-native';
@@ -28,6 +28,7 @@ import SwipeModal from '../../components/SwipeModal';
 import ShoppingListContext from '../../contexts/ShoppingListContext';
 import axios from 'axios';
 import RecipeCard from '../../components/RecipeCard';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 const APP_ID = process.env.EXPO_PUBLIC_APP_ID;
 const APP_KEY = process.env.EXPO_PUBLIC_APP_KEY;
@@ -49,8 +50,28 @@ const PlannedScreen = ({ navigation }) => {
   const { addItem, newRecipe } = useContext(ShoppingListContext);
 
   useEffect(() => {
+    const loadRecipes = async () => {
+      try {
+        const storedRecipes = await AsyncStorage.getItem('recipes');
+        if (storedRecipes) {
+          setRecipes(JSON.parse(storedRecipes));
+        }
+      } catch (error) {
+        console.error('Error loading recipes from AsyncStorage:', error);
+      }
+    };
+
+    loadRecipes();
     setSearchResults(favorites);
   }, [favorites]);
+
+  const saveRecipes = async (newRecipes) => {
+    try {
+      await AsyncStorage.setItem('recipes', JSON.stringify(newRecipes));
+    } catch (error) {
+      console.error('Error saving recipes to AsyncStorage:', error);
+    }
+  };
 
   const handleAddAllItemsToShoppingList = () => {
     const startOfCurrentWeek = startOfWeek(selectedDate, { locale: de });
@@ -129,6 +150,7 @@ const PlannedScreen = ({ navigation }) => {
         updatedRecipes[date] = [];
       }
       updatedRecipes[date].push(newRecipe);
+      saveRecipes(updatedRecipes);
       return updatedRecipes;
     });
     setAddRecipeModalVisible(false);
@@ -138,6 +160,10 @@ const PlannedScreen = ({ navigation }) => {
     setRecipes((prevRecipes) => {
       const updatedRecipes = { ...prevRecipes };
       updatedRecipes[date].splice(index, 1);
+      if (updatedRecipes[date].length === 0) {
+        delete updatedRecipes[date];
+      }
+      saveRecipes(updatedRecipes);
       return updatedRecipes;
     });
   };
@@ -247,22 +273,6 @@ const PlannedScreen = ({ navigation }) => {
               />
             </Pressable>
           </View>
-          {/* <TouchableOpacity
-            style={styles.addToShoppingListBtn}
-            onPress={handleAddAllItemsToShoppingList}
-          >
-            <Pressable
-              onPress={handleAddAllItemsToShoppingList}
-              style={({ pressed }) => [pressed && styles.pressedButton]}
-            >
-              <MaterialIcons
-                name="add-shopping-cart"
-                size={25}
-                style={styles.addToShoppingListIcon}
-                color={colors.brightest}
-              />
-            </Pressable>
-          </TouchableOpacity> */}
         </View>
         <Text style={styles.dateRange}>{dateRange}</Text>
       </View>
@@ -368,6 +378,7 @@ const PlannedScreen = ({ navigation }) => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   emptyDayText: {
     textAlign: 'center',
@@ -409,14 +420,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-
     marginBottom: 8,
   },
   dayText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: colors.accent,
-    //textAlign: 'center', // Text horizontal zentrieren
   },
   recipeCardContainer: {
     width: '50%',
@@ -435,7 +444,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accent,
     borderRadius: 10,
     marginRight: 0,
-    //flexDirection: 'column',
   },
   modalContainer: {
     flex: 1,
@@ -490,8 +498,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: colors.accent,
     borderRadius: 30,
-    //borderTopLeftRadius: 30,
-    //borderBottomLeftRadius: 30,
   },
   pressedButton: {
     transform: [{ scale: 0.6 }],
@@ -515,16 +521,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     position: 'absolute',
     right: 27,
-    //top: 10,
-    bottom: -20, // optional: Abstand vom unteren Bildschirmrand
+    bottom: -20,
   },
-
   addToList: {
     color: colors.brightest,
     marginRight: 10,
     fontSize: 16,
   },
-
   addToShoppingListIcon: {
     marginLeft: 'auto',
   },
