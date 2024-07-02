@@ -2,7 +2,10 @@ import axios from 'axios';
 
 const APP_ID = process.env.EXPO_PUBLIC_APP_ID;
 const APP_KEY = process.env.EXPO_PUBLIC_APP_KEY;
+
 const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL_V2;
+const BASE_URL_URI = process.env.EXPO_PUBLIC_BASE_URL_URI;
+const BASE_URL_ASSISTENT = process.env.EXPO_PUBLIC_BASE_URL_ASSISTENT;
 
 /**
  *
@@ -12,7 +15,7 @@ const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL_V2;
  *
  * @param {boolean} logURL Wether to log the full URL encoded by axios. Defaults to false.
  *
- * @returns {Object} The response object specified
+ * @returns {Object} The response object from api specified
  * {@link https://developer.edamam.com/edamam-docs-recipe-api here} or an error.
  * Access recipes via 'response.hits' and a single one via 'response.hits[x].recipe'.
  * A recipe has the following keys:
@@ -34,6 +37,33 @@ export async function fetchRecipes(params, logURL = false) {
       params: finalParams,
       paramsSerializer: paramsSerializer,
     });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function fetchRecipesViaURI(URI, logURL = false) {
+  const params = {
+    type: 'public',
+    app_id: APP_ID,
+    app_key: APP_KEY,
+  };
+
+  if (logURL) logFullURL(params);
+  const url =
+    'https://api.edamam.com' +
+    URI +
+    '&app_id=' +
+    APP_ID +
+    '&app_key=' +
+    APP_KEY +
+    '&type=public';
+
+  console.log(url);
+
+  try {
+    const response = await axios.get(url);
     return response.data;
   } catch (error) {
     throw error;
@@ -69,54 +99,33 @@ function logFullURL(finalParams) {
   console.log('----- Full URL from axios: ' + fullUrl + ' -----');
 }
 
-export async function fetchRecipesWithAI(query) {
-  try {
-    const data = {
-      options: {
-        calls: ['search'],
+export async function fetchAnswer(query) {
+  const data = {
+    options: {
+      calls: ['search'],
+    },
+    exchange: [
+      {
+        query: query,
       },
-      exchange: [
-        {
-          query: 'vegan paleo recipes, 2-3oz protein per serving',
-        },
-      ],
-    };
+    ],
+  };
 
-    axios
-      .post('https://api.edamam.com/api/assistant/v1/query', {
-        options: {
-          calls: ['search'],
-        },
-        exchange: [
-          {
-            query: 'vegan paleo recipes, 2-3oz protein per serving',
-          },
-        ],
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    auth: {
+      username: APP_ID,
+      password: APP_KEY,
+    },
+  };
 
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        auth: {
-          username: '6ade19a7',
-          password: 'c21c4c9d86daa63669e6ad212ce598d8',
-        },
-      })
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.error('Error response data:', error.response.data);
-          console.error('Error response status:', error.response.status);
-          console.error('Error response headers:', error.response.headers);
-        } else if (error.request) {
-          console.error('Error request:', error.request);
-        } else {
-          console.error('Error message:', error.message);
-        }
-      });
+  try {
+    const response = await axios.post(BASE_URL_ASSISTENT, data, config);
+    return response.data;
   } catch (error) {
-    console.error('Error!:', error);
+    throw error;
   }
 }
