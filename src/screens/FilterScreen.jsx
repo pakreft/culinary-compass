@@ -72,10 +72,10 @@ export default function FilterScreen({ navigation }) {
 
     fetchRecipes({ ...selectedFilters, ...{ random: 'True' } })
       .then((res) => {
-        console.log(res);
         setResponse(res);
         navigation.navigate(routes.recipeViewScreen, {
-          res: response,
+          res: res,
+          filters: selectedFilters,
         });
       })
       .catch((err) => {
