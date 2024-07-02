@@ -45,7 +45,7 @@ const FavoritesScreen = () => {
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>
-          Ohhh du hast noch keine Lieblingsrezepte? Such welche :D
+          Du möchtest Favoriten? Such welche!
         </Text>
         <MainButton
           title="Rezepte Suchen"

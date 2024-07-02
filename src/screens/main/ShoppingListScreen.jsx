@@ -212,9 +212,9 @@ const ShoppingListScreen = () => {
           <Ionicons name="add" size={32} color="white" />
         </TouchableOpacity>
       )}
-      <TouchableOpacity style={styles.resetButton} onPress={clearAsyncStorage}>
+      {/* <TouchableOpacity style={styles.resetButton} onPress={clearAsyncStorage}>
         <Text style={styles.resetButtonText}>Reset AsyncStorage</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <Modal
         animationType="slide"
         transparent={true}
