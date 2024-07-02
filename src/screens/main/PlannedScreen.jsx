@@ -216,7 +216,20 @@ const PlannedScreen = ({ navigation }) => {
       <ScrollView>
         {days.map((day, dayIndex) => (
           <View key={dayIndex} style={styles.dayContainer}>
-            <Text style={styles.dayText}>{day.date}</Text>
+            <View style={styles.dayTextContainer}>
+              <Text style={styles.dayText}>{day.date}</Text>
+              <TouchableOpacity
+                style={styles.addRecipeButton}
+                onPress={() => {
+                  setCurrentDate(day.formattedDate);
+                  setAddRecipeModalVisible(true);
+                  setSearchQuery('');
+                  setSearchResults(favorites);
+                }}
+              >
+                <Ionicons name="add" size={16} color="#fff" />
+              </TouchableOpacity>
+            </View>
             {day.recipes.map((recipe, recipeIndex) => (
               <View
                 key={recipe.uri + recipeIndex}
@@ -234,18 +247,6 @@ const PlannedScreen = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
             ))}
-            <TouchableOpacity
-              style={styles.addRecipeButton}
-              onPress={() => {
-                setCurrentDate(day.formattedDate);
-                setAddRecipeModalVisible(true);
-                setSearchQuery('');
-                setSearchResults(favorites);
-              }}
-            >
-              <Ionicons name="add" size={24} color="#fff" />
-              <Text style={styles.addRecipeButtonText}>Add Recipe</Text>
-            </TouchableOpacity>
           </View>
         ))}
       </ScrollView>
@@ -289,13 +290,24 @@ const PlannedScreen = ({ navigation }) => {
                 value={searchQuery}
                 onChangeText={setSearchQuery}
               />
-              <Button
-                title="Search"
+
+              <Pressable
                 onPress={() => {
                   searchRecipes(true);
                   Keyboard.dismiss();
                 }}
-              />
+                style={({ pressed }) => [
+                  ,
+                  styles.searchButton,
+                  pressed && styles.pressedButton,
+                ]}
+              >
+                <MaterialIcons
+                  name={'search'}
+                  size={40}
+                  color={colors.primary}
+                />
+              </Pressable>
             </View>
             <FlatList
               numColumns={2} // Two Columns for RecipeCard
@@ -343,36 +355,48 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   header: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
+    //backgroundColor: 'black',
+    paddingHorizontal: 0,
+    paddingTop: 0,
+    paddingBottom: 6,
     backgroundColor: colors.primary,
   },
   weekNavigation: {
+    //backgroundColor: 'black',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 8,
+    //marginTop: 1,
   },
   weekText: {
+    //backgroundColor: 'black',
     fontSize: 18,
+    justifyContent: 'center',
     color: colors.accent,
     marginHorizontal: 8,
   },
   dateRange: {
+    //backgroundColor: 'black',
     fontSize: 16,
     color: colors.accent,
     textAlign: 'center',
     marginTop: 4,
   },
   dayContainer: {
+    //backgroundColor: 'black',
+    ///justifyContent: 'center',
     paddingHorizontal: 16,
     paddingVertical: 8,
+  },
+  dayTextContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   dayText: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 8,
     color: colors.accent,
   },
   recipeContainer: {
@@ -385,24 +409,27 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   addRecipeButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
+    //flexDirection: 'row',
+    //alignItems: 'center',
+    //justifyContent: 'center',
+    padding: 6,
     backgroundColor: colors.accent,
     borderRadius: 10,
-    marginTop: 8,
+    marginRight: 20,
+    flexDirection: 'column',
   },
   addRecipeButtonText: {
     color: '#fff',
     marginLeft: 4,
   },
   modalContainer: {
+    //backgroundColor: 'black',
+    //color: 'black',
     flex: 1,
     justifyContent: 'center',
   },
   modalContent: {
-    backgroundColor: 'lightgrey',
+    backgroundColor: colors.header,
     padding: 20,
     borderRadius: 10,
     width: '90%',
@@ -414,7 +441,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: colors.header,
+    color: colors.accent,
   },
   searchContainer: {
     flexDirection: 'row',
@@ -423,20 +450,42 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    height: 40,
-    borderColor: 'gray',
+    borderColor: '#ccc',
     borderWidth: 1,
+    padding: 10,
     marginRight: 10,
-    paddingHorizontal: 10,
+    marginLeft: -21,
+    borderTopRightRadius: 30,
+    borderBottomRightRadius: 30,
+    paddingLeft: 20,
+    backgroundColor: colors.brightest,
   },
+
   closeButton: {
-    marginTop: 10,
+    //marginTop: 10,
     alignItems: 'center',
-    color: colors.iconsGrocery,
+    backgroundColor: colors.accent, // Hintergrundfarbe ändern
+    //padding: 10, // Polsterung hinzufügen
+    borderRadius: 10, // Abgerundete Ecken
+    //borderWidth: 1, // Rand hinzufügen
+    borderColor: colors.primary, // Randfarbe
   },
   closeButtonText: {
-    color: colors.iconsGrocery,
-    fontSize: 16,
+    color: colors.primary, // Schriftfarbe ändern
+    fontSize: 16, // Schriftgröße anpassen
+    //fontWeight: 'bold', // Schrift fett machen
+  },
+  searchButton: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    padding: 8,
+    paddingHorizontal: 15,
+    backgroundColor: colors.accent,
+    borderTopLeftRadius: 30,
+    borderBottomLeftRadius: 30,
+  },
+  pressedButton: {
+    transform: [{ scale: 0.2 }],
   },
   loadingContainer: {
     flex: 1,
@@ -451,11 +500,16 @@ const styles = StyleSheet.create({
   },
   addToShoppingListBtn: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     backgroundColor: colors.accent,
-    padding: 8,
-    borderRadius: 8,
+    padding: 10,
+    borderRadius: 10,
+    position: 'absolute',
+    right: 27,
+    //top: 10,
+    bottom: -20, // optional: Abstand vom unteren Bildschirmrand
   },
+
   addToList: {
     color: colors.brightest,
     marginRight: 10,
