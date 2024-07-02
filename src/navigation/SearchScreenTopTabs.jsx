@@ -1,19 +1,20 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 import { routes } from '../constants/routes';
 import SearchScreen from '../screens/main/SearchScreen';
 import FilterScreen from '../screens/FilterScreen';
+import colors from '../constants/colors';
 
 const Tab = createMaterialTopTabNavigator();
+const { width } = Dimensions.get('window');
 
 export default function SearchScreenTopTabs() {
   return (
     <Tab.Navigator
       initialRouteName={routes.searchScreen}
       screenOptions={screenOptions}
-      style={styles.wholeScreenContainer}
-      sceneContainerStyle={styles.sceneContainer}
+      style={styles.container}
     >
       <Tab.Screen
         name={routes.searchScreen}
@@ -30,60 +31,33 @@ export default function SearchScreenTopTabs() {
 }
 
 const styles = StyleSheet.create({
-  wholeScreenContainer: {
-    //backgroundColor:
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
   },
-  sceneContainer: {},
-
-  // Tab Bar
   tabBar: {
     padding: 5,
-    //backgroundColor: 'green',
-  },
-
-  // Tabs
-  tabsContainer: {
-    justifyContent: 'center',
-    //backgroundColor: 'blue',
+    backgroundColor: '#fff',
   },
   tab: {
-    //backgroundColor: 'red',
-    width: 120,
-  },
-
-  // Indicator
-  indicatorContainer: {
-    width: 240,
-    //backgroundColor: 'yellow',
+    width: width / 2,
   },
   indicator: {
-    width: 120,
     height: 5,
     borderRadius: 20,
+    backgroundColor: colors.secondaryAccent,
   },
-
-  // Text
-  label: {},
+  label: {
+    color: colors.accent,
+    fontWeight: 'bold',
+  },
 });
 
 const screenOptions = {
-  tabBarActiveTintColor: 'blue',
-
-  // Container for the whole tab bar
+  tabBarActiveTintColor: colors.accent,
+  tabBarInactiveTintColor: 'grey',
   tabBarStyle: styles.tabBar,
-
-  // Container for tabs
-  tabBarContentContainerStyle: styles.tabsContainer,
-
-  // Tab
-  tabBarItemStyle: styles.tab,
-
-  // Container for indicators
-  tabBarIndicatorContainerStyle: styles.indicatorContainer,
-
-  // Indicator
   tabBarIndicatorStyle: styles.indicator,
-
-  // Text in tabs
-  tabBarLabel: styles.label,
+  tabBarLabelStyle: styles.label,
+  tabBarItemStyle: styles.tab,
 };
