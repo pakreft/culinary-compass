@@ -1,134 +1,89 @@
+import { StyleSheet, View, Text } from 'react-native';
 import { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Button,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
-import { getRecipes } from '../../api/edamam';
-import SwipeModal from '../../components/SwipeModal';
+
 import DefaultSearchBar from '../../components/DefaultSearchBar';
 import MainButton from '../../components/MainButton';
+import { fetchAnswer, fetchRecipesViaURI } from '../../api/edamam';
+import { routes } from '../../constants/routes';
 
-export default function SearchScreen() {
+export default function SearchScreen({ navigation }) {
   const [query, setQuery] = useState('');
-  const [recipes, setRecipes] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [fetching, setFetching] = useState(false);
+  const [respone, setResponse] = useState([]);
+  const [error, setError] = useState(false);
 
-  const fetchRecipes = async () => {
-    if (query.trim() === '') return;
-    setLoading(true);
-    try {
-      const data = await getRecipes(query);
-      setRecipes(data.hits);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  function onSubmitQuery() {
+    if (fetching) return;
+    setError(false);
+    setFetching(true);
 
-  const openRecipeModal = (recipe) => {
-    setSelectedRecipe(recipe);
-    setModalVisible(true);
-  };
+    let uri = '';
 
-  const closeRecipeModal = () => {
-    setSelectedRecipe(null);
-    setModalVisible(false);
-  };
+    // First fetch from AI
+    fetchAnswer(query)
+      .then((res) => {
+        if (res.story !== undefined) setError(true);
+        else {
+          // Second fetch for recipe
+          uri = res.request.uri;
+          fetchRecipesViaURI(uri, true)
+            .then((res) => {
+              console.log('RESPONSE :' + res.hits);
+              navigation.navigate(routes.recipeViewScreen, {
+                res: res,
+              });
+            })
+            .catch((err) => {
+              setError(true);
+            });
+        }
+      })
+      .catch((err) => {
+        setError(true);
+      })
+      .finally(() => {
+        setFetching(false);
+      });
+  }
 
   return (
     <View style={styles.screenContainer}>
       <View style={styles.inputContainer}>
-        <DefaultSearchBar />
+        <DefaultSearchBar input={query} onChangeText={setQuery} />
+        {error ? (
+          <Text style={styles.errorText}>Error... Try again</Text>
+        ) : null}
       </View>
       <View style={styles.listContainer}></View>
       <View style={styles.buttonContainer}>
-        <MainButton />
+        <MainButton
+          loading={fetching}
+          onPress={onSubmitQuery}
+          disabled={query.length == 0 ? true : false}
+        />
       </View>
     </View>
-    /**
-    <View style={styles.container}>
-      <Text style={styles.title}>Search Recipes</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter ingredient or recipe"
-        value={query}
-        onChangeText={setQuery}
-      />
-      <Button title="Search" onPress={fetchRecipes} />
-      {loading && <Text>Loading...</Text>}
-      <FlatList
-        data={recipes}
-        keyExtractor={(item) => item.recipe.uri}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.recipeContainer}
-            onPress={() => openRecipeModal(item.recipe)}
-          >
-            <Text style={styles.recipeTitle}>{item.recipe.label}</Text>
-            <Text>{item.recipe.source}</Text>
-          </TouchableOpacity>
-        )}
-      />
-      <SwipeModal
-        visible={modalVisible}
-        onClose={closeRecipeModal}
-        recipe={selectedRecipe}
-      />
-    </View> */
   );
 }
 
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    padding: 10,
+    padding: 8,
   },
   inputContainer: {
-    backgroundColor: 'red',
+    marginBottom: 8,
+    //backgroundColor: 'red',
   },
   listContainer: {
     flex: 1,
-    backgroundColor: 'blue',
+    //backgroundColor: 'blue',
   },
   buttonContainer: {
-    backgroundColor: 'yellow',
+    //backgroundColor: 'yellow',
+  },
+  errorText: {
+    alignSelf: 'center',
+    marginTop: 20,
   },
 });
-
-/**const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    paddingHorizontal: 8,
-    marginBottom: 16,
-  },
-  recipeContainer: {
-    padding: 16,
-    borderBottomColor: '#ccc',
-    borderBottomWidth: 1,
-  },
-  recipeTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
-*/
