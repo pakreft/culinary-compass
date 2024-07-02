@@ -33,14 +33,15 @@ export default function SearchScreenTopTabs() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
   },
   tabBar: {
     padding: 5,
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
   },
   tab: {
     width: width / 2,
+    backgroundColor: 'transparent',
   },
   indicator: {
     height: 5,
