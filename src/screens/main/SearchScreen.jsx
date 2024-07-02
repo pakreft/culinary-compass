@@ -24,6 +24,7 @@ export default function SearchScreen({ navigation }) {
     fetchAnswer(query)
       .then((res) => {
         if (res.story !== undefined) {
+          console.log(res.story);
           setError(true);
         } else {
           console.log('ANSWER from AI: ' + res);

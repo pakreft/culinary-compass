@@ -15,6 +15,7 @@ import { useFavorites } from '../contexts/FavoritesContext';
 import ShoppingListContext from '../contexts/ShoppingListContext'; /// Von Lennard: Handling, dass Items an die Einkaufliste geschickt werden können
 import { useNavigation } from '@react-navigation/native'; //Felix Add
 import { closeModal } from '../screens/main/FavoritesScreen';
+import WebViewModal from './WebViewModal';
 //import routes from '../constants//routes'; Felix add
 const SwipeModal = ({ visible, onClose, recipe }) => {
   const [pan] = useState(new Animated.ValueXY(0, 0));
@@ -23,6 +24,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   const { addNewItem, newRecipe } = useContext(ShoppingListContext); /// Neuer Code von Lennard
   const [ingredients, setIngredients] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [webViewVisible, setWebViewVisible] = useState(false);
   const navigation = useNavigation();
   //const { height } = Dimensions.get('window'); doesnt work smoothly
 
@@ -260,6 +262,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
             <Text style={styles.buttonText}>Plan</Text>
           </Pressable> */}
           <Pressable
+            onPress={() => setWebViewVisible(true)}
             style={({ pressed }) => [
               styles.pressableButton,
               pressed && styles.pressedButton,
@@ -284,6 +287,12 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
           <MaterialIcons name="close" size={28} color={colors.accent} />
         </Pressable>
       </ScrollView>
+
+      <WebViewModal
+        visible={webViewVisible}
+        onClose={() => setWebViewVisible(false)}
+        url={recipe.url}
+      />
     </Modal>
   );
 };
