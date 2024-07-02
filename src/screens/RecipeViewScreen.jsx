@@ -1,13 +1,15 @@
 import { StyleSheet, View, FlatList, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
 
-import { fetchRecipes } from '../api/edamam';
+import { fetchRecipes, fetchRecipesOnlyURL } from '../api/edamam';
 import RecipeCard from '../components/RecipeCard';
 import SwipeModal from '../components/SwipeModal';
 
 export default function RecipeViewScreen({ route }) {
   const NUM_LOAD_NEXT = 5;
+  const aiScreen = route.params.aiScreen;
   const filters = route.params.filters;
+  const uri = route.params.uri;
 
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [hits, setHits] = useState(route.params.res.hits);
@@ -15,10 +17,30 @@ export default function RecipeViewScreen({ route }) {
   const [fetching, setFetching] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
+  function handleAIAnswer(uri) {
+    fetchRecipesOnlyURL(uri)
+      .then((res) => {
+        setHits((prevHits) => [...prevHits, ...res.hits]);
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        setFetching(false);
+      });
+  }
+
   function loadMoreRecipes() {
     if (fetching) return;
 
     setFetching(true);
+
+    if (aiScreen) {
+      handleAIAnswer(uri);
+      return;
+    }
+
     const params = {
       from: from,
       to: from + NUM_LOAD_NEXT,
@@ -53,7 +75,7 @@ export default function RecipeViewScreen({ route }) {
             }}
           />
         )}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={0.1}
         onEndReached={loadMoreRecipes}
         ListFooterComponent={
           fetching ? (

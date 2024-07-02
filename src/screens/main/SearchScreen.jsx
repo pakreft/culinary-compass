@@ -9,7 +9,6 @@ import { routes } from '../../constants/routes';
 export default function SearchScreen({ navigation }) {
   const [query, setQuery] = useState('');
   const [fetching, setFetching] = useState(false);
-  const [respone, setResponse] = useState([]);
   const [error, setError] = useState(false);
 
   function onSubmitQuery() {
@@ -22,23 +21,31 @@ export default function SearchScreen({ navigation }) {
     // First fetch from AI
     fetchAnswer(query)
       .then((res) => {
-        if (res.story !== undefined) setError(true);
-        else {
+        if (res.story !== undefined) {
+          setError(true);
+        } else {
+          console.log('ANSWER from AI: ' + res);
+
           // Second fetch for recipe
           uri = res.request.uri;
           fetchRecipesViaURI(uri, true)
             .then((res) => {
-              console.log('RESPONSE :' + res.hits);
+              setFetching(true);
               navigation.navigate(routes.recipeViewScreen, {
                 res: res,
+                aiScreen: true,
+                uri: res._links.next.href,
               });
             })
             .catch((err) => {
+              console.error('Error in fetch Recipe: ' + err);
               setError(true);
-            });
+            })
+            .finally(() => setFetching(false));
         }
       })
       .catch((err) => {
+        console.error('Error in fetch Answer: ' + err);
         setError(true);
       })
       .finally(() => {

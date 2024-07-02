@@ -43,6 +43,15 @@ export async function fetchRecipes(params, logURL = false) {
   }
 }
 
+export async function fetchRecipesOnlyURL(url) {
+  try {
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function fetchRecipesViaURI(URI, logURL = false) {
   const params = {
     type: 'public',
