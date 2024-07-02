@@ -29,7 +29,7 @@ export default function MainButton({
 const styles = StyleSheet.create({
   container: {},
   button: {
-    backgroundColor: colors.secondaryAccent,
+    backgroundColor: colors.accent,
   },
   title: {},
   disabled: {},
