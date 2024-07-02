@@ -86,6 +86,10 @@ export default function FilterScreen({ navigation }) {
       });
   }
 
+  function capitalizeFirstLetterOfEachWord(str) {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+
   // Determine if MainButton should be disabled
   const isMainButtonDisabled = Object.keys(selectedFilters).length === 0;
 
@@ -101,7 +105,7 @@ export default function FilterScreen({ navigation }) {
           filters={filters}
           renderItem={({ categorie, filterKey }) => (
             <FilterChip
-              title={filterKey}
+              title={capitalizeFirstLetterOfEachWord(filterKey)}
               categorie={categorie}
               filterKey={filterKey}
               onPress={updateSelectedFilters}
