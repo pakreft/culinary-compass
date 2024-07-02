@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20,
     bottom: 20,
-    backgroundColor: colors.secondaryAccent,
+    backgroundColor: colors.accent,
     width: 70,
     height: 70,
     borderRadius: 35,
