@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -15,9 +16,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ShoppingListContext from '../../contexts/ShoppingListContext';
 import ShoppingListItem from '../../components/ShoppingListItem';
 import colors from '../../constants/colors';
-import App from '../../App';
 
 const Tab = createMaterialTopTabNavigator();
+const { width } = Dimensions.get('window');
 
 const APP_ID = process.env.EXPO_PUBLIC_APP_ID;
 const APP_KEY = process.env.EXPO_PUBLIC_APP_KEY;
@@ -203,6 +204,8 @@ const ShoppingListScreen = () => {
             setCurrentTab(currentRouteName);
           },
         }}
+        screenOptions={screenOptions}
+        style={styles.container}
       >
         <Tab.Screen name="Shopping Mode" component={CategoryView} />
         <Tab.Screen name="Planning Mode" component={RecipeView} />
@@ -274,6 +277,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  tabBar: {
+    padding: 5,
+    backgroundColor: '#fff',
+  },
+  tab: {
+    width: width / 2,
+  },
+  indicator: {
+    height: 5,
+    borderRadius: 20,
+    backgroundColor: colors.secondaryAccent,
+  },
+  label: {
+    color: colors.accent,
+    fontWeight: 'bold',
   },
   categoryContainer: {
     marginBottom: 0,
@@ -377,5 +396,14 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
 });
+
+const screenOptions = {
+  tabBarActiveTintColor: colors.accent,
+  tabBarInactiveTintColor: 'grey',
+  tabBarStyle: styles.tabBar,
+  tabBarIndicatorStyle: styles.indicator,
+  tabBarLabelStyle: styles.label,
+  tabBarItemStyle: styles.tab,
+};
 
 export default ShoppingListScreen;

@@ -15,7 +15,9 @@ import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../constants/colors';
 import { useFavorites } from '../contexts/FavoritesContext';
 import ShoppingListContext from '../contexts/ShoppingListContext'; /// Von Lennard: Handling, dass Items an die Einkaufliste geschickt werden können
-
+import { useNavigation } from '@react-navigation/native'; //Felix Add
+import { closeModal } from '../screens/main/FavoritesScreen';
+//import routes from '../constants//routes'; Felix add
 const SwipeModal = ({ visible, onClose, recipe }) => {
   const [pan] = useState(new Animated.ValueXY(0, 0));
   const [portions, setPortions] = useState(1);
@@ -23,7 +25,7 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
   const { addNewItem, newRecipe } = useContext(ShoppingListContext); /// Neuer Code von Lennard
   const [ingredients, setIngredients] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
-
+  const navigation = useNavigation();
   //const { height } = Dimensions.get('window'); doesnt work smoothly
 
   useEffect(() => {
@@ -285,6 +287,15 @@ const SwipeModal = ({ visible, onClose, recipe }) => {
 
         <View style={styles.instructionsButtons}>
           <Pressable
+            onPress={() =>
+              // if (!isFavorite) {
+              //   addFavorite(recipe);
+              //   console.log('Added to Favorites');
+              // }
+              //navigation.navigate('PlannedStack')
+              console.log('PLAN')
+            }
+            //onPress={() => addFavorite()}
             style={({ pressed }) => [
               styles.pressableButton,
               pressed && styles.pressedButton,

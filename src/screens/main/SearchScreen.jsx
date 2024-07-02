@@ -28,6 +28,7 @@ export default function SearchScreen({ navigation }) {
 
           // Second fetch for recipe
           uri = res.request.uri;
+          console.log(uri);
           fetchRecipesViaURI(uri, true)
             .then((res) => {
               setFetching(true);

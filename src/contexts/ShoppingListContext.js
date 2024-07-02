@@ -7,17 +7,17 @@ const initialItems = [
   {
     id: '1',
     name: 'Apple',
-    category: 'Obst',
+    category: 'Fruit',
     amount: '200',
     measurement: 'g',
     count: null,
     done: false,
-    recipe: 'Obstsalat',
+    recipe: 'Fruit Salad',
   },
   {
     id: '2',
     name: 'Carrot',
-    category: 'Gemüse',
+    category: 'Vegetable',
     amount: '300',
     measurement: 'g',
     count: null,
@@ -27,7 +27,7 @@ const initialItems = [
   {
     id: '3',
     name: 'Chicken',
-    category: 'Fleisch',
+    category: 'Meat',
     amount: '500',
     measurement: 'g',
     count: null,
@@ -37,7 +37,7 @@ const initialItems = [
   {
     id: '4',
     name: 'Bread',
-    category: 'Getreide',
+    category: 'Grain',
     amount: null,
     measurement: 'loaf',
     count: 1,
@@ -47,7 +47,7 @@ const initialItems = [
   {
     id: '5',
     name: 'Banana',
-    category: 'Obst',
+    category: 'Fruit',
     amount: '150',
     measurement: 'g',
     count: null,
@@ -57,7 +57,7 @@ const initialItems = [
   {
     id: '6',
     name: 'Spinach',
-    category: 'Gemüse',
+    category: 'Vegetable',
     amount: '200',
     measurement: 'g',
     count: null,
@@ -67,7 +67,7 @@ const initialItems = [
   {
     id: '7',
     name: 'Beef',
-    category: 'Fleisch',
+    category: 'Meat',
     amount: '400',
     measurement: 'g',
     count: null,
@@ -77,7 +77,7 @@ const initialItems = [
   {
     id: '8',
     name: 'Rice',
-    category: 'Getreide',
+    category: 'Grain',
     amount: '1',
     measurement: 'kg',
     count: null,
@@ -87,19 +87,19 @@ const initialItems = [
   {
     id: '9',
     name: 'Sugar',
-    category: 'Gewürze',
+    category: 'Spices',
     amount: null,
-    measurement: 'Esslöffel',
+    measurement: 'tablespoon',
     count: 1,
     done: false,
     recipe: 'Dessert',
   },
 ];
 
-const initialCategories = ['Sonstige','Obst', 'Gemüse', 'Fleisch', 'Getreide', 'Gewürze'];
+const initialCategories = ['Miscellaneous', 'Fruit', 'Vegetable', 'Meat', 'Grain', 'Spices'];
 const initialRecipes = [
-  'Sonstige',
-  'Obstsalat',
+  'Miscellaneous',
+  'Fruit Salad',
   'Bolognese',
   'Chicken Curry',
   'Sandwich',
@@ -109,6 +109,7 @@ const initialRecipes = [
   'Fried Rice',
   'Dessert',
 ];
+
 
 export const ShoppingListProvider = ({ children }) => {
   const [items, setItems] = useState([]);

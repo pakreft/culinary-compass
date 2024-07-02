@@ -21,7 +21,7 @@ export default function BottomTabBar() {
       screenOptions={{
         headerShown: false,
         tabBarLabelStyle: {},
-        tabBarStyle: { backgroundColor: colors.primary},
+        tabBarStyle: { backgroundColor: colors.primary },
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: 'darkgrey',
       }}
@@ -66,7 +66,7 @@ export default function BottomTabBar() {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name={routes.playGroundStack}
         component={PlayGroundScreenStack}
         options={{
@@ -75,7 +75,7 @@ export default function BottomTabBar() {
             <Icon name="construct" color={color} size={size} />
           ),
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 }
