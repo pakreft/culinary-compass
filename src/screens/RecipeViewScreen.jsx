@@ -3,14 +3,17 @@ import { useState } from 'react';
 
 import { fetchRecipes } from '../api/edamam';
 import RecipeCard from '../components/RecipeCard';
+import SwipeModal from '../components/SwipeModal';
 
 export default function RecipeViewScreen({ route }) {
   const NUM_LOAD_NEXT = 5;
   const filters = route.params.filters;
 
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [hits, setHits] = useState(route.params.res.hits);
   const [from, setFrom] = useState(route.params.res.to);
   const [fetching, setFetching] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   function loadMoreRecipes() {
     if (fetching) return;
@@ -41,7 +44,15 @@ export default function RecipeViewScreen({ route }) {
         style={styles.list}
         data={hits}
         numColumns={2}
-        renderItem={({ item: hit }) => <RecipeCard recipe={hit.recipe} />}
+        renderItem={({ item: hit }) => (
+          <RecipeCard
+            recipe={hit.recipe}
+            onPress={() => {
+              setSelectedRecipe(hit.recipe);
+              setModalVisible(true);
+            }}
+          />
+        )}
         onEndReachedThreshold={0.5}
         onEndReached={loadMoreRecipes}
         ListFooterComponent={
@@ -59,6 +70,14 @@ export default function RecipeViewScreen({ route }) {
             <View style={{ height: 10 }} />
           )
         }
+      />
+      <SwipeModal
+        visible={modalVisible}
+        onClose={() => {
+          setSelectedRecipe(null);
+          setModalVisible(false);
+        }}
+        recipe={selectedRecipe}
       />
     </View>
   );
