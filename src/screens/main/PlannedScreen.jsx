@@ -22,7 +22,7 @@ import {
   endOfWeek,
 } from 'date-fns';
 import colors from '../../constants/colors';
-import { de } from 'date-fns/locale';
+import { de, enUS } from 'date-fns/locale';
 import { useFavorites } from '../../contexts/FavoritesContext';
 import SwipeModal from '../../components/SwipeModal';
 import ShoppingListContext from '../../contexts/ShoppingListContext';
@@ -105,16 +105,16 @@ const PlannedScreen = ({ navigation }) => {
   const startDate = startOfWeek(selectedDate, { locale: de });
   const endDate = endOfWeek(selectedDate, { locale: de });
   const dateRange = `${format(startDate, 'dd.MM.yy', {
-    locale: de,
+    locale: enUS,
   })} - ${format(endDate, 'dd.MM.yy', {
-    locale: de,
+    locale: enUS,
   })}`;
 
   const days = [];
   for (let i = 0; i < 7; i++) {
     const dayDate = addDays(startDate, i);
     const formattedDate = format(dayDate, 'yyyy-MM-dd');
-    const dayName = format(dayDate, 'EEEE', { locale: de });
+    const dayName = format(dayDate, 'EEEE', { locale: enUS });
     days.push({
       date: `${dayName} - ${format(dayDate, 'dd.MM.yy')}`,
       formattedDate,

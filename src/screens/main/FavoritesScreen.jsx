@@ -44,11 +44,9 @@ const FavoritesScreen = () => {
   if (favorites.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>
-          Du möchtest Favoriten? Such welche!
-        </Text>
+        <Text style={styles.emptyText}>Do you want favorites? Find some!</Text>
         <MainButton
-          title="Rezepte Suchen"
+          title="Find Recipes"
           onPress={() => navigation.navigate('SearchScreen')}
         />
       </View>
