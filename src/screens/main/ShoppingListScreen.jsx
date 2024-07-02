@@ -47,7 +47,8 @@ const clearAsyncStorage = async () => {
 };
 
 const CategoryView = () => {
-  const { items, categories, deleteItem, toggleItemDone } = useContext(ShoppingListContext);
+  const { items, categories, deleteItem, toggleItemDone } =
+    useContext(ShoppingListContext);
 
   const groupItems = (items) => {
     const groupedItems = {};
@@ -69,7 +70,7 @@ const CategoryView = () => {
   };
 
   const renderCategory = ({ item }) => {
-    const filteredItems = item.items.filter(i => !i.done);
+    const filteredItems = item.items.filter((i) => !i.done);
     const groupedItems = groupItems(filteredItems);
 
     return (
@@ -78,10 +79,7 @@ const CategoryView = () => {
         <FlatList
           data={groupedItems}
           renderItem={({ item }) => (
-            <ShoppingModeItem
-              item={item}
-              onToggleDone={toggleItemDone}
-            />
+            <ShoppingModeItem item={item} onToggleDone={toggleItemDone} />
           )}
           keyExtractor={(item) => item.id}
         />
@@ -89,15 +87,16 @@ const CategoryView = () => {
     );
   };
 
-  const categorizedItems = categories?.map((category) => ({
-    category,
-    items: items.filter((item) => item.category === category),
-  })) || [];
+  const categorizedItems =
+    categories?.map((category) => ({
+      category,
+      items: items.filter((item) => item.category === category),
+    })) || [];
 
-  const doneItems = items.filter(item => item.done);
+  const doneItems = items.filter((item) => item.done);
 
   const removeAllDoneItems = () => {
-    doneItems.forEach(item => deleteItem(item.id));
+    doneItems.forEach((item) => deleteItem(item.id));
   };
 
   return (
@@ -108,16 +107,18 @@ const CategoryView = () => {
           <FlatList
             data={doneItems}
             renderItem={({ item }) => (
-              <ShoppingModeItem
-                item={item}
-                onToggleDone={toggleItemDone}
-              />
+              <ShoppingModeItem item={item} onToggleDone={toggleItemDone} />
             )}
             keyExtractor={(item) => item.id}
           />
           {doneItems.length > 0 && (
-            <TouchableOpacity style={styles.removeAllButton} onPress={removeAllDoneItems}>
-              <Text style={styles.removeAllButtonText}>Remove All Done Items</Text>
+            <TouchableOpacity
+              style={styles.removeAllButton}
+              onPress={removeAllDoneItems}
+            >
+              <Text style={styles.removeAllButtonText}>
+                Remove All Done Items
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -130,7 +131,8 @@ const CategoryView = () => {
 };
 
 const RecipeView = () => {
-  const { items, recipes, deleteItem, toggleItemDone } = useContext(ShoppingListContext);
+  const { items, recipes, deleteItem, toggleItemDone } =
+    useContext(ShoppingListContext);
 
   const renderRecipe = ({ item }) => {
     const sortedItems = item.items.sort((a, b) => a.done - b.done);
@@ -152,10 +154,11 @@ const RecipeView = () => {
     );
   };
 
-  const recipeItems = recipes?.map((recipe, index) => ({
-    recipe,
-    items: items.filter((item) => item.recipe === recipe),
-  })) || [];
+  const recipeItems =
+    recipes?.map((recipe, index) => ({
+      recipe,
+      items: items.filter((item) => item.recipe === recipe),
+    })) || [];
 
   return (
     <FlatList
@@ -177,15 +180,15 @@ const ShoppingListScreen = () => {
 
   const handleAddItem = () => {
     console.log(APP_ID, APP_KEY);
-    addItem({ 
+    addItem({
       id: `${name}-${Date.now()}`, // Create a unique ID
-      name, 
-      category, 
+      name,
+      category,
       amount: parseFloat(amount), // Convert amount to a number
-      measurement: 'g', 
-      count: null, 
-      done: false, 
-      recipe 
+      measurement: 'g',
+      count: null,
+      done: false,
+      recipe,
     });
     setModalVisible(false);
     setName('');
@@ -211,7 +214,10 @@ const ShoppingListScreen = () => {
         <Tab.Screen name="Planning Mode" component={RecipeView} />
       </Tab.Navigator>
       {currentTab === 'Planning Mode' && (
-        <TouchableOpacity style={styles.fab} onPress={() => setModalVisible(true)}>
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => setModalVisible(true)}
+        >
           <Ionicons name="add" size={32} color="white" />
         </TouchableOpacity>
       )}
@@ -263,7 +269,10 @@ const ShoppingListScreen = () => {
             <TouchableOpacity style={styles.addButton} onPress={handleAddItem}>
               <Text style={styles.addButtonText}>Add</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.closeButton, { backgroundColor: 'red' }]} onPress={() => setModalVisible(false)}>
+            <TouchableOpacity
+              style={[styles.closeButton, { backgroundColor: 'red' }]}
+              onPress={() => setModalVisible(false)}
+            >
               <Ionicons name="close" size={24} color="white" />
             </TouchableOpacity>
           </View>
@@ -276,14 +285,15 @@ const ShoppingListScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
   },
   tabBar: {
     padding: 5,
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
   },
   tab: {
     width: width / 2,
+    backgroundColor: 'transparent',
   },
   indicator: {
     height: 5,
