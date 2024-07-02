@@ -14,6 +14,8 @@ import colors from '../constants/colors';
 
 const RecipeCard = ({ recipe, onPress }) => {
   //({ recipe = {}, onPress = () => {}  })  }) => {
+  const imageUrl = recipe.image;
+
   return (
     <Pressable
       onPress={onPress}
@@ -23,8 +25,12 @@ const RecipeCard = ({ recipe, onPress }) => {
       ]}
     >
       <Card containerStyle={styles.card}>
-        <Image source={{ uri: recipe.image }} style={styles.image} />
-        <Text style={styles.label}>{recipe.label}</Text>
+        <Image source={{ uri: imageUrl }} style={styles.image} />
+        <View style={styles.label}>
+          <Text style={styles.labelText} numberOfLines={2} ellipsizeMode="tail">
+            {recipe.label}
+          </Text>
+        </View>
 
         <View style={styles.durationInfo}>
           <MaterialIcons
@@ -58,12 +64,16 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
   },
   label: {
-    fontSize: 16,
+    height: 45,
     paddingVertical: 5,
     paddingHorizontal: 10,
-    textAlign: 'center',
+    justifyContent: 'center', // Vertikal zentrieren
     flex: 0,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  labelText: {
+    fontSize: 16,
+    textAlign: 'center',
   },
   durationInfo: {
     flexDirection: 'row',
