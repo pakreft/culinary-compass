@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20,
     bottom: 20,
-    backgroundColor: '#653c33',
+    backgroundColor: colors.secondaryAccent,
     width: 70,
     height: 70,
     borderRadius: 35,

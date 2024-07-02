@@ -9,6 +9,8 @@ import PlannedScreenStack from './PlannedScreenStack';
 import ShoppingListScreenStack from './ShoppingListScreenStack';
 import PlayGroundScreenStack from './PlayGroundScreenStack';
 
+import colors from '../constants/colors'; // Import the colors
+
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabBar() {
@@ -19,8 +21,8 @@ export default function BottomTabBar() {
       screenOptions={{
         headerShown: false,
         tabBarLabelStyle: {},
-        tabBarStyle: { backgroundColor: 'lightgrey' },
-        tabBarActiveTintColor: 'purple',
+        tabBarStyle: { backgroundColor: colors.accent },
+        tabBarActiveTintColor: 'white',
         tabBarInactiveTintColor: 'darkgrey',
       }}
     >
@@ -48,7 +50,7 @@ export default function BottomTabBar() {
         name={routes.plannedStack}
         component={PlannedScreenStack}
         options={{
-          tabBarLabel: 'Planned',
+          tabBarLabel: 'Meal Planner',
           tabBarIcon: ({ color, size }) => (
             <Icon name="calendar" color={color} size={size} />
           ),

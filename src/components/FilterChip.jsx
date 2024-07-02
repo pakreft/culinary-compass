@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { Chip } from '@rneui/base';
 import { useState } from 'react';
+import colors from '../constants/colors';
 
 export default function FilterChip({
   title,
@@ -35,15 +36,14 @@ const styles = StyleSheet.create({
 
   // Buttons
   selectedButton: {
-    backgroundColor: 'green',
+    backgroundColor: colors.doneButton,
   },
   unselectedButton: {
-    backgroundColor: 'red',
+    backgroundColor: colors.accent,
   },
   disabledButton: {
-    backgroundColor: 'darkgrey',
+    backgroundColor: colors.secondaryAccent,
   },
-
   // Titles
   selectedTitle: {},
   unselectedTitle: {},

@@ -4,6 +4,7 @@ import { routes } from '../constants/routes';
 import { stackScreenOptions } from './stackScreenOptions';
 import PlannedScreen from '../screens/main/PlannedScreen';
 import AddRecipeScreen from '../screens/AddRecipeScreen';
+import colors from '../constants/colors';
 
 const Stack = createStackNavigator();
 
@@ -11,7 +12,15 @@ export default function PlannedScreenStack() {
   return (
     <Stack.Navigator
       initialRouteName={routes.plannedScreen}
-      screenOptions={stackScreenOptions}
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: colors.accent, // Set the header background color
+        },
+        headerTintColor: '#fff', // Set the header text color
+        headerTitleStyle: {
+          fontWeight: 'bold', // Set the header title style
+        },
+      }}
     >
       <Stack.Screen
         name={routes.plannedScreen}

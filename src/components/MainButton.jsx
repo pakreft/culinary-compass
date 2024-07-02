@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { Button } from '@rneui/base';
+import colors from '../constants/colors';
 
 export default function MainButton({
   title = 'Button',
@@ -27,7 +28,7 @@ export default function MainButton({
 const styles = StyleSheet.create({
   container: {},
   button: {
-    backgroundColor: 'red',
+    backgroundColor: colors.secondaryAccent,
   },
   title: {},
   disabled: {},

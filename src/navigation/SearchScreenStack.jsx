@@ -4,6 +4,7 @@ import { routes } from '../constants/routes';
 import { stackScreenOptions } from './stackScreenOptions';
 import SearchScreenTopTabs from './SearchScreenTopTabs';
 import RecipeViewScreen from '../screens/RecipeViewScreen';
+import colors from '../constants/colors';
 
 const Stack = createStackNavigator();
 
@@ -11,7 +12,15 @@ export default function SearchScreenStack() {
   return (
     <Stack.Navigator
       initialRouteName={routes.searchTopTabs}
-      screenOptions={stackScreenOptions}
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: colors.accent, // Set the header background color
+        },
+        headerTintColor: '#fff', // Set the header text color
+        headerTitleStyle: {
+          fontWeight: 'bold', // Set the header title style
+        },
+      }}
     >
       <Stack.Screen
         name={routes.searchTopTabs}

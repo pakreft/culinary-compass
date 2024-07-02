@@ -105,13 +105,13 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   buttonNotDone: {
-    backgroundColor: 'green',
+    backgroundColor: colors.doneButton,
   },
   buttonDone: {
     backgroundColor: 'gray',
   },
   buttonDelete: {
-    backgroundColor: 'red',
+    backgroundColor: colors.delButton,
   },
   buttonText: {
     color: 'white',
