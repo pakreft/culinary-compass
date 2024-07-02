@@ -2,19 +2,16 @@ import React, { useState, useContext, useEffect } from 'react';
 import {
   View,
   Text,
-  ScrollView,
   TouchableOpacity,
   StyleSheet,
   Modal,
   TextInput,
-  Button,
   FlatList,
-  Image,
-  Keyboard,
+  Keyboard, // Add this import
   ActivityIndicator,
   Pressable,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Calendar } from 'react-native-calendars';
 import {
   format,
@@ -30,8 +27,7 @@ import { useFavorites } from '../../contexts/FavoritesContext';
 import SwipeModal from '../../components/SwipeModal';
 import ShoppingListContext from '../../contexts/ShoppingListContext';
 import axios from 'axios';
-import RecipeCard from '../../components/RecipeCard'; // Import RecipeCard
-import { MaterialIcons } from '@expo/vector-icons'; // Import MaterialIcons from Expo
+import RecipeCard from '../../components/RecipeCard';
 
 const APP_ID = process.env.EXPO_PUBLIC_APP_ID;
 const APP_KEY = process.env.EXPO_PUBLIC_APP_KEY;
@@ -171,6 +167,51 @@ const PlannedScreen = ({ navigation }) => {
     }
   };
 
+  const renderDayItem = ({ item: day }) => (
+    <View style={styles.dayContainer}>
+      <View style={styles.dayTextContainer}>
+        <Text style={styles.dayText}>{day.date}</Text>
+        <TouchableOpacity
+          style={styles.addRecipeButton}
+          onPress={() => {
+            setCurrentDate(day.formattedDate);
+            setAddRecipeModalVisible(true);
+            setSearchQuery('');
+            setSearchResults(favorites);
+          }}
+        >
+          <Ionicons name="add" size={16} color="#fff" />
+        </TouchableOpacity>
+      </View>
+      <FlatList
+        data={day.recipes}
+        numColumns={2}
+        keyExtractor={(item, index) => `${item.uri}-${index}`}
+        renderItem={({ item: recipe }) => (
+          <View style={styles.recipeCardContainer}>
+            <RecipeCard
+              recipe={recipe}
+              onPress={() => openRecipeModal(recipe)}
+            />
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() =>
+                removeRecipe(day.formattedDate, day.recipes.indexOf(recipe))
+              }
+            >
+              <Ionicons name="close" size={24} color={colors.accent} />
+            </TouchableOpacity>
+          </View>
+        )}
+        ListEmptyComponent={
+          <Text style={styles.emptyDayText}>
+            No recipes planned for this day
+          </Text>
+        }
+      />
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <SwipeModal
@@ -193,11 +234,23 @@ const PlannedScreen = ({ navigation }) => {
             <Ionicons name="chevron-forward" size={24} color={colors.accent} />
           </TouchableOpacity>
 
-          <TouchableOpacity
+          <View style={styles.addToShoppingListBtn}>
+            <Pressable
+              onPress={handleAddAllItemsToShoppingList}
+              style={({ pressed }) => [pressed && styles.pressedButton]}
+            >
+              <MaterialIcons
+                name="add-shopping-cart"
+                size={25}
+                style={({ pressed }) => [pressed && styles.pressedButton]}
+                color={colors.brightest}
+              />
+            </Pressable>
+          </View>
+          {/* <TouchableOpacity
             style={styles.addToShoppingListBtn}
             onPress={handleAddAllItemsToShoppingList}
           >
-            {/*<Text style={styles.addToList}>Add all to {'\n'}shopping list</Text>*/}
             <Pressable
               onPress={handleAddAllItemsToShoppingList}
               style={({ pressed }) => [pressed && styles.pressedButton]}
@@ -209,47 +262,15 @@ const PlannedScreen = ({ navigation }) => {
                 color={colors.brightest}
               />
             </Pressable>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <Text style={styles.dateRange}>{dateRange}</Text>
       </View>
-      <ScrollView>
-        {days.map((day, dayIndex) => (
-          <View key={dayIndex} style={styles.dayContainer}>
-            <View style={styles.dayTextContainer}>
-              <Text style={styles.dayText}>{day.date}</Text>
-              <TouchableOpacity
-                style={styles.addRecipeButton}
-                onPress={() => {
-                  setCurrentDate(day.formattedDate);
-                  setAddRecipeModalVisible(true);
-                  setSearchQuery('');
-                  setSearchResults(favorites);
-                }}
-              >
-                <Ionicons name="add" size={16} color="#fff" />
-              </TouchableOpacity>
-            </View>
-            {day.recipes.map((recipe, recipeIndex) => (
-              <View
-                key={recipe.uri + recipeIndex}
-                style={styles.recipeContainer}
-              >
-                <RecipeCard
-                  recipe={recipe}
-                  onPress={() => openRecipeModal(recipe)}
-                />
-                <TouchableOpacity
-                  style={styles.deleteButton}
-                  onPress={() => removeRecipe(day.formattedDate, recipeIndex)}
-                >
-                  <Ionicons name="close" size={24} color={colors.accent} />
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-        ))}
-      </ScrollView>
+      <FlatList
+        data={days}
+        renderItem={renderDayItem}
+        keyExtractor={(item, index) => `day-${index}`}
+      />
 
       <Modal
         visible={calendarVisible}
@@ -297,7 +318,6 @@ const PlannedScreen = ({ navigation }) => {
                   Keyboard.dismiss();
                 }}
                 style={({ pressed }) => [
-                  ,
                   styles.searchButton,
                   pressed && styles.pressedButton,
                 ]}
@@ -310,7 +330,7 @@ const PlannedScreen = ({ navigation }) => {
               </Pressable>
             </View>
             <FlatList
-              numColumns={2} // Two Columns for RecipeCard
+              numColumns={2}
               data={searchResults}
               keyExtractor={(item, index) => {
                 const uniqueKey = item.recipe ? item.recipe.uri : item.uri;
@@ -348,83 +368,76 @@ const PlannedScreen = ({ navigation }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
+  emptyDayText: {
+    textAlign: 'center',
+    color: colors.accent,
+    fontStyle: 'italic',
+  },
   container: {
     flex: 1,
     backgroundColor: colors.primary,
   },
   header: {
-    //backgroundColor: 'black',
     paddingHorizontal: 0,
     paddingTop: 0,
     paddingBottom: 6,
     backgroundColor: colors.primary,
   },
   weekNavigation: {
-    //backgroundColor: 'black',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    //marginTop: 1,
   },
   weekText: {
-    //backgroundColor: 'black',
     fontSize: 18,
     justifyContent: 'center',
     color: colors.accent,
     marginHorizontal: 8,
   },
   dateRange: {
-    //backgroundColor: 'black',
     fontSize: 16,
     color: colors.accent,
     textAlign: 'center',
     marginTop: 4,
   },
   dayContainer: {
-    //backgroundColor: 'black',
-    ///justifyContent: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     paddingVertical: 8,
   },
   dayTextContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
+
     marginBottom: 8,
   },
   dayText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: colors.accent,
+    //textAlign: 'center', // Text horizontal zentrieren
   },
-  recipeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 8,
+  recipeCardContainer: {
+    width: '50%',
+    padding: 5,
   },
   deleteButton: {
-    padding: 8,
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    padding: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderRadius: 15,
   },
   addRecipeButton: {
-    //flexDirection: 'row',
-    //alignItems: 'center',
-    //justifyContent: 'center',
     padding: 6,
     backgroundColor: colors.accent,
     borderRadius: 10,
-    marginRight: 20,
-    flexDirection: 'column',
-  },
-  addRecipeButtonText: {
-    color: '#fff',
-    marginLeft: 4,
+    marginRight: 0,
+    //flexDirection: 'column',
   },
   modalContainer: {
-    //backgroundColor: 'black',
-    //color: 'black',
     flex: 1,
     justifyContent: 'center',
   },
@@ -433,9 +446,9 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     width: '90%',
-    height: '80%', // Fixierte Höhe
+    height: '80%',
     alignSelf: 'center',
-    justifyContent: 'flex-start', // Ändert die Ausrichtung nach oben
+    justifyContent: 'flex-start',
   },
   modalTitle: {
     fontSize: 20,
@@ -460,20 +473,15 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     backgroundColor: colors.brightest,
   },
-
   closeButton: {
-    //marginTop: 10,
     alignItems: 'center',
-    backgroundColor: colors.accent, // Hintergrundfarbe ändern
-    //padding: 10, // Polsterung hinzufügen
-    borderRadius: 10, // Abgerundete Ecken
-    //borderWidth: 1, // Rand hinzufügen
-    borderColor: colors.primary, // Randfarbe
+    backgroundColor: colors.accent,
+    borderRadius: 10,
+    borderColor: colors.primary,
   },
   closeButtonText: {
-    color: colors.primary, // Schriftfarbe ändern
-    fontSize: 16, // Schriftgröße anpassen
-    //fontWeight: 'bold', // Schrift fett machen
+    color: colors.primary,
+    fontSize: 16,
   },
   searchButton: {
     borderColor: '#ccc',
@@ -481,11 +489,12 @@ const styles = StyleSheet.create({
     padding: 8,
     paddingHorizontal: 15,
     backgroundColor: colors.accent,
-    borderTopLeftRadius: 30,
-    borderBottomLeftRadius: 30,
+    borderRadius: 30,
+    //borderTopLeftRadius: 30,
+    //borderBottomLeftRadius: 30,
   },
   pressedButton: {
-    transform: [{ scale: 0.2 }],
+    transform: [{ scale: 0.6 }],
   },
   loadingContainer: {
     flex: 1,
@@ -515,9 +524,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     fontSize: 16,
   },
-  pressedButton: {
-    backgroundColor: colors.primaryLight,
-  },
+
   addToShoppingListIcon: {
     marginLeft: 'auto',
   },

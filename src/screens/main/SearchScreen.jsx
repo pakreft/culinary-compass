@@ -26,6 +26,7 @@ export default function SearchScreen({ navigation }) {
         else {
           // Second fetch for recipe
           uri = res.request.uri;
+          console.log(uri);
           fetchRecipesViaURI(uri, true)
             .then((res) => {
               console.log('RESPONSE :' + res.hits);
@@ -34,11 +35,13 @@ export default function SearchScreen({ navigation }) {
               });
             })
             .catch((err) => {
+              //console.log(err);
               setError(true);
             });
         }
       })
       .catch((err) => {
+        console.log(err);
         setError(true);
       })
       .finally(() => {
