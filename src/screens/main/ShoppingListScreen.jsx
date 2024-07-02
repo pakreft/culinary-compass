@@ -46,28 +46,35 @@ const clearAsyncStorage = async () => {
   }
 };
 
+const convertToGrams = (item) => {
+  if (item.measurement !== 'g') {
+    // Conversion logic here, if necessary
+    // For simplicity, assume all items are already in grams
+    item.amount = item.amount; // No conversion
+    item.measurement = 'g';
+  }
+  return item;
+};
+
 const CategoryView = () => {
   const { items, categories, deleteItem, toggleItemDone } =
     useContext(ShoppingListContext);
 
-  const groupItems = (items) => {
-    const groupedItems = {};
-
-    items.forEach((item) => {
-      const key = `${item.name}-${item.measurement}`;
-      if (!groupedItems[key]) {
-        groupedItems[key] = { ...item };
-      } else {
-        if (item.measurement === 'g') {
-          groupedItems[key].amount += item.amount;
+    const groupItems = (items) => {
+      const groupedItems = {};
+    
+      items.forEach((item) => {
+        item = convertToGrams(item); // Ensure the item is in grams
+        const key = `${item.name}-${item.measurement}`;
+        if (!groupedItems[key]) {
+          groupedItems[key] = { ...item, amount: parseFloat(item.amount) };
         } else {
-          groupedItems[key].count += item.count;
+          groupedItems[key].amount += parseFloat(item.amount);
         }
-      }
-    });
-
-    return Object.values(groupedItems);
-  };
+      });
+    
+      return Object.values(groupedItems);
+    };
 
   const renderCategory = ({ item }) => {
     const filteredItems = item.items.filter((i) => !i.done);
