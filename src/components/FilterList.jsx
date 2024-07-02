@@ -20,12 +20,24 @@ export default function FilterList({ filters, renderItem }) {
     return result;
   }
 
+  function pascalCaseToCapitalizedWords(str) {
+    // Add a space before all uppercase letters (that are not at the start of the string)
+    const spacedString = str.replace(/([A-Z])/g, ' $1').trim();
+    // Capitalize the first letter of each word
+    const capitalizedString = spacedString.replace(/\b\w/g, (char) =>
+      char.toUpperCase(),
+    );
+    return capitalizedString;
+  }
+
   return (
     <SectionList
       sections={sections}
       stickySectionHeadersEnabled={false}
       renderSectionHeader={({ section }) => (
-        <Text style={styles.sectionHeader}>{section.title}</Text>
+        <Text style={styles.sectionHeader}>
+          {pascalCaseToCapitalizedWords(section.title)}
+        </Text>
       )}
       renderItem={({ section }) => (
         <View style={styles.filtersContainer}>
