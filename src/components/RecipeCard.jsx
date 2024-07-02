@@ -26,9 +26,11 @@ const RecipeCard = ({ recipe, onPress }) => {
     >
       <Card containerStyle={styles.card}>
         <Image source={{ uri: imageUrl }} style={styles.image} />
-        <Text style={styles.label} numberOfLines={2} ellipsizeMode="tail">
-          {recipe.label}
-        </Text>
+        <View style={styles.label}>
+          <Text style={styles.labelText} numberOfLines={2} ellipsizeMode="tail">
+            {recipe.label}
+          </Text>
+        </View>
 
         <View style={styles.durationInfo}>
           <MaterialIcons
@@ -63,13 +65,15 @@ const styles = StyleSheet.create({
   },
   label: {
     height: 45,
-    fontSize: 16,
     paddingVertical: 5,
     paddingHorizontal: 10,
-    textAlign: 'center',
-    //alignSelf: 'center',
+    justifyContent: 'center', // Vertikal zentrieren
     flex: 0,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  labelText: {
+    fontSize: 16,
+    textAlign: 'center',
   },
   durationInfo: {
     flexDirection: 'row',
